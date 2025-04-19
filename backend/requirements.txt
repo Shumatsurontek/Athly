@@ -1,0 +1,23 @@
+# API Framework
+fastapi==0.103.1
+uvicorn==0.23.2
+pydantic==2.3.0
+python-dotenv==1.0.0
+
+# LangChain et IA
+langchain==0.0.311
+langchain-mistralai==0.0.2
+mistralai==0.0.8
+chromadb==0.4.15
+tiktoken==0.5.1
+
+# Embeddings
+sentence-transformers==2.2.2
+
+# Outils de traitement du texte
+nltk==3.8.1
+sentencepiece==0.1.99
+
+# Utilitaires
+python-multipart==0.0.6
+requests==2.31.0 
