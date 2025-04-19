@@ -1,4 +1,10 @@
 from langchain.prompts import PromptTemplate
+import logging
+import traceback
+import time
+
+# Configuration du logger
+logger = logging.getLogger("athly.expert")
 
 class SportExpertAgent:
     """
@@ -13,16 +19,21 @@ class SportExpertAgent:
             llm: Le modèle de langage à utiliser
             knowledge_base: La base de connaissances sportives
         """
+        logger.info("Initialisation de l'agent expert en sport")
         self.llm = llm
         self.knowledge_base = knowledge_base
+        
+        logger.debug("Chargement des prompts pour l'agent expert")
         self.advice_prompt = self._load_advice_prompt()
         self.structure_prompt = self._load_structure_prompt()
         self.detailed_prompt = self._load_detailed_prompt()
+        logger.info("Agent expert en sport initialisé avec succès")
     
     def _load_advice_prompt(self):
         """
         Charge le prompt pour générer des conseils généraux.
         """
+        logger.debug("Chargement du prompt pour les conseils")
         template = """
         Tu es un expert en sciences du sport et en programmation d'entraînement. Utilise tes connaissances 
         pour répondre à la question suivante de manière détaillée et précise. Base tes réponses sur les 
@@ -39,6 +50,7 @@ class SportExpertAgent:
         """
         Charge le prompt pour générer la structure d'un programme d'entraînement.
         """
+        logger.debug("Chargement du prompt pour la structure du programme")
         template = """
         Tu es un coach sportif spécialisé en programmation d'entraînement. Ton objectif est de créer une 
         structure de programme d'entraînement pour les paramètres suivants:
@@ -67,6 +79,7 @@ class SportExpertAgent:
         """
         Charge le prompt pour générer les détails d'un programme d'entraînement.
         """
+        logger.debug("Chargement du prompt pour les détails du programme")
         template = """
         Tu es un coach sportif expert en programmation d'entraînement. Ton objectif est de détailler le 
         programme d'entraînement suivant avec des exercices spécifiques, des séries/répétitions, des durées 
@@ -104,17 +117,30 @@ class SportExpertAgent:
         Returns:
             Les conseils générés
         """
-        # Récupération des informations pertinentes depuis la base de connaissances
-        context_docs = self.knowledge_base.query(query)
-        context = "\n".join([doc.page_content for doc in context_docs])
+        logger.info(f"Génération de conseils pour la requête: {query[:50]}...")
+        start_time = time.time()
         
-        # Formatage du prompt avec le contexte et la question
-        prompt = self.advice_prompt.format(context=context, query=query)
-        
-        # Génération de la réponse
-        response = self.llm.invoke(prompt)
-        
-        return response
+        try:
+            # Récupération des informations pertinentes depuis la base de connaissances
+            logger.debug("Requête à la base de connaissances")
+            context_docs = self.knowledge_base.query(query)
+            context = "\n".join([doc.page_content for doc in context_docs])
+            logger.debug(f"Contexte récupéré: {len(context)} caractères, {len(context_docs)} documents")
+            
+            # Formatage du prompt avec le contexte et la question
+            logger.debug("Formatage du prompt de conseil")
+            prompt = self.advice_prompt.format(context=context, query=query)
+            
+            # Génération de la réponse
+            logger.info("Invocation du LLM pour générer des conseils")
+            response = self.llm.invoke(prompt)
+            
+            logger.info(f"Conseils générés en {time.time() - start_time:.2f} secondes")
+            return response
+        except Exception as e:
+            logger.error(f"Erreur lors de la génération de conseils: {str(e)}")
+            logger.error(traceback.format_exc())
+            raise
     
     def generate_program_structure(self, disciplines, duration, level, goals):
         """
@@ -129,29 +155,42 @@ class SportExpertAgent:
         Returns:
             La structure du programme
         """
-        # Conversion de la liste de disciplines en chaîne de caractères
-        disciplines_str = ", ".join(disciplines)
+        logger.info(f"Génération de la structure du programme: {', '.join(disciplines)}, niveau {level}")
+        start_time = time.time()
         
-        # Construction de la requête pour la base de connaissances
-        query = f"programming {disciplines_str} {level} {goals} {duration} weeks"
-        
-        # Récupération des informations pertinentes depuis la base de connaissances
-        context_docs = self.knowledge_base.query(query)
-        context = "\n".join([doc.page_content for doc in context_docs])
-        
-        # Formatage du prompt avec les paramètres et le contexte
-        prompt = self.structure_prompt.format(
-            disciplines=disciplines_str,
-            duration=duration,
-            level=level,
-            goals=goals,
-            context=context
-        )
-        
-        # Génération de la structure
-        response = self.llm.invoke(prompt)
-        
-        return response
+        try:
+            # Conversion de la liste de disciplines en chaîne de caractères
+            disciplines_str = ", ".join(disciplines)
+            
+            # Construction de la requête pour la base de connaissances
+            query = f"programming {disciplines_str} {level} {goals} {duration} weeks"
+            logger.debug(f"Requête à la base de connaissances: {query}")
+            
+            # Récupération des informations pertinentes depuis la base de connaissances
+            context_docs = self.knowledge_base.query(query)
+            context = "\n".join([doc.page_content for doc in context_docs])
+            logger.debug(f"Contexte récupéré: {len(context)} caractères, {len(context_docs)} documents")
+            
+            # Formatage du prompt avec les paramètres et le contexte
+            logger.debug("Formatage du prompt de structure")
+            prompt = self.structure_prompt.format(
+                disciplines=disciplines_str,
+                duration=duration,
+                level=level,
+                goals=goals,
+                context=context
+            )
+            
+            # Génération de la structure
+            logger.info("Invocation du LLM pour générer la structure du programme")
+            response = self.llm.invoke(prompt)
+            
+            logger.info(f"Structure du programme générée en {time.time() - start_time:.2f} secondes")
+            return response
+        except Exception as e:
+            logger.error(f"Erreur lors de la génération de la structure du programme: {str(e)}")
+            logger.error(traceback.format_exc())
+            raise
     
     def generate_detailed_program(self, structure, constraints="", equipment="", frequency=3, time_per_session=60):
         """
@@ -167,16 +206,27 @@ class SportExpertAgent:
         Returns:
             Le programme détaillé
         """
-        # Formatage du prompt avec les paramètres
-        prompt = self.detailed_prompt.format(
-            structure=structure,
-            constraints=constraints,
-            equipment=equipment,
-            frequency=frequency,
-            time_per_session=time_per_session
-        )
+        logger.info(f"Génération des détails du programme: freq={frequency}/semaine, {time_per_session}min/séance")
+        start_time = time.time()
         
-        # Génération des détails du programme
-        response = self.llm.invoke(prompt)
-        
-        return response 
+        try:
+            # Formatage du prompt avec les paramètres
+            logger.debug("Formatage du prompt de détails")
+            prompt = self.detailed_prompt.format(
+                structure=structure,
+                constraints=constraints,
+                equipment=equipment,
+                frequency=frequency,
+                time_per_session=time_per_session
+            )
+            
+            # Génération des détails du programme
+            logger.info("Invocation du LLM pour générer les détails du programme")
+            response = self.llm.invoke(prompt)
+            
+            logger.info(f"Détails du programme générés en {time.time() - start_time:.2f} secondes")
+            return response
+        except Exception as e:
+            logger.error(f"Erreur lors de la génération des détails du programme: {str(e)}")
+            logger.error(traceback.format_exc())
+            raise 

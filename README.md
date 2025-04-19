@@ -1,86 +1,113 @@
-# Athly - Votre coach sportif IA personnel
+# Athly - Votre Coach Sportif IA Personnel
 
-Athly est une application web qui utilise l'intelligence artificielle pour générer des programmes d'entraînement personnalisés et fournir des conseils adaptés à vos objectifs sportifs.
+Athly est une application de coaching sportif personnel utilisant l'intelligence artificielle pour générer des programmes d'entraînement personnalisés et fournir des conseils d'experts en fonction de vos objectifs, de votre niveau et de vos contraintes.
 
 ## Fonctionnalités
 
-- **Chat Intelligent** : Posez vos questions et obtenez des conseils personnalisés
-- **Programmes Personnalisés** : Générez des programmes d'entraînement sur mesure
-- **Approche Multisport** : Combinez course à pied, musculation et exercices au poids du corps
+- 🏋️ Génération de programmes d'entraînement personnalisés
+- 🤖 Interface de chat pour poser des questions à votre coach IA
+- 📊 Formats visuels clairs pour vos programmes d'entraînement
+- 📱 Interface utilisateur responsive et intuitive
 
-## Technologies utilisées
+## Architecture
 
-### Frontend
-- Next.js / React
-- TypeScript
-- CSS Modules
+L'application Athly utilise une architecture à base d'agents LangChain:
 
-### Backend
-- Python
-- FastAPI
-- Mistral AI API
+1. **Agent Orchestrateur**: Coordonne le flux de travail entre les agents spécialisés
+2. **Agent Expert en Sport**: Fournit des conseils spécialisés et génère des structures de programmes
+3. **Agent Générateur de Tables**: Structure les données d'entraînement en formats visuels
+
+## Prérequis
+
+- Python 3.10+
+- Node.js 14+
+- Clé API Mistral
 
 ## Installation
 
-### Prérequis
-- Node.js (v14+)
-- Python 3.8+
-- Clé API Mistral AI
+### Backend
 
-### Étapes d'installation
+1. Clonez le dépôt:
+   ```bash
+   git clone https://github.com/votre-username/athly.git
+   cd athly
+   ```
 
-1. Clonez le dépôt
+2. Créez un environnement virtuel et installez les dépendances:
+   ```bash
+   cd backend
+   python -m venv env
+   source env/bin/activate  # ou env\Scripts\activate sur Windows
+   pip install -r requirements.txt
+   ```
+
+3. Créez un fichier `.env` dans le dossier `backend`:
+   ```
+   MISTRAL_API_KEY=votre_clé_api_mistral
+   ```
+
+### Frontend
+
+1. Installez les dépendances:
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+## Démarrage
+
+1. Démarrez le backend:
+   ```bash
+   cd backend
+   python main.py
+   ```
+
+2. Démarrez le frontend:
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+3. Accédez à l'application dans votre navigateur: `http://localhost:3000`
+
+## Tests
+
+Pour exécuter les tests:
+
 ```bash
-git clone https://github.com/[votre-nom]/athly.git
-cd athly
-```
-
-2. Installez les dépendances
-```bash
-# Dépendances principales et frontend
-npm run install:all
-
-# Dépendances backend (dans un environnement virtuel Python)
-python -m venv env
-source env/bin/activate  # Sur Windows: env\Scripts\activate
-pip install -r backend/requirements.txt
-```
-
-3. Configurez l'environnement
-   - Créez un fichier `backend/.env` avec votre clé API Mistral:
-```
-MISTRAL_API_KEY=votre_clé_api_mistral
-DEBUG=True
-ENVIRONMENT=development
-PORT=8000
-HOST=0.0.0.0
-```
-
-4. Lancez l'application
-```bash
-# Mode développement (lance le backend et le frontend)
-npm run dev
-
-# Ou séparément:
-npm run frontend
-npm run backend
+cd backend
+python -m unittest discover tests
 ```
 
 ## Structure du projet
 
-- `frontend/` - Application Next.js
-  - `src/pages/` - Pages de l'application
-  - `src/components/` - Composants React réutilisables
-  - `public/` - Fichiers statiques
-- `backend/` - API FastAPI
-  - `agents/` - Agents IA spécialisés
-  - `models/` - Modèles de données et base de connaissances
-  - `data/` - Données d'entraînement et ressources
+```
+athly/
+├── backend/
+│   ├── agents/            # Agents LangChain
+│   ├── models/            # Base de connaissances
+│   ├── data/              # Données d'entraînement
+│   ├── logs/              # Logs de l'application
+│   └── tests/             # Tests unitaires et d'intégration
+├── frontend/
+│   ├── public/            # Fichiers statiques
+│   └── src/               # Code source React
+│       ├── components/    # Composants UI
+│       └── pages/         # Pages de l'application
+└── docs/                  # Documentation
+```
 
-## Contributions
+## Obtenir une clé API Mistral
 
-Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou à soumettre une pull request.
+Pour utiliser Athly, vous devez obtenir une clé API Mistral:
 
-## Licence
+1. Créez un compte sur [Mistral AI Platform](https://console.mistral.ai/)
+2. Obtenez votre clé API depuis votre espace utilisateur
+3. Ajoutez cette clé dans le fichier `.env` du backend
 
-Ce projet est sous licence MIT 
+## Dépannage
+
+Si vous rencontrez des erreurs lors de l'initialisation de l'agent, vérifiez:
+- La validité de votre clé API Mistral
+- La connexion internet
+- La version des dépendances dans requirements.txt 
