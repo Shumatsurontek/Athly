@@ -107,7 +107,9 @@ class TestSportExpertAgent(unittest.TestCase):
         prompt = args[0]
         
         # Vérifier que les paramètres sont inclus dans le prompt
-        self.assertIn(structure, prompt.template)
+        # Dans les nouvelles versions de LangChain, convertir le prompt en string pour vérifier son contenu
+        prompt_str = str(prompt)
+        self.assertIn(structure, prompt_str)
         
         # Vérifier le résultat
         self.assertEqual(result, "Réponse simulée du LLM")

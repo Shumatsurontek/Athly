@@ -52,7 +52,7 @@ const ChatInterface: React.FC = () => {
     
     try {
       // Send message to backend
-      const response = await axios.post('/api/chat', {
+      const response = await axios.post('http://backend:8000/api/chat', {
         message: input
       });
       

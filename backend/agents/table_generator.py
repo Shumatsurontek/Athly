@@ -1,4 +1,10 @@
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
+import logging
+import traceback
+import time
+
+# Configuration du logger
+logger = logging.getLogger("athly.table_generator")
 
 class TableGeneratorAgent:
     """
@@ -12,9 +18,11 @@ class TableGeneratorAgent:
         Args:
             llm: Le modèle de langage à utiliser
         """
+        logger.info("Initialisation de l'agent codeur de tables")
         self.llm = llm
         self.templates = self._load_table_templates()
         self.table_prompt = self._create_table_prompt()
+        logger.info("Agent codeur de tables initialisé avec succès")
     
     def _load_table_templates(self):
         """
@@ -23,6 +31,7 @@ class TableGeneratorAgent:
         Returns:
             Dictionnaire de templates par format
         """
+        logger.debug("Chargement des templates de tableaux")
         templates = {
             "markdown": """
             # Exemple de tableau Markdown
@@ -73,6 +82,7 @@ class TableGeneratorAgent:
         """
         Crée le prompt principal pour la génération de tableaux.
         """
+        logger.debug("Création du prompt principal")
         template = """
         Tu es un expert en création de tableaux et de formats visuels pour les programmes d'entraînement sportif.
         
@@ -109,22 +119,34 @@ class TableGeneratorAgent:
         Returns:
             Le tableau formaté
         """
-        # Récupération du template de format approprié
-        if format_type not in self.templates:
-            format_type = "markdown"  # Format par défaut
+        logger.info(f"Génération d'un tableau au format {format_type}")
+        start_time = time.time()
         
-        format_template = self.templates[format_type]
-        
-        # Formatage du prompt
-        prompt = self.table_prompt.format(
-            program_data=program_data,
-            format_template=format_template
-        )
-        
-        # Génération du tableau
-        response = self.llm.invoke(prompt)
-        
-        return response
+        try:
+            # Récupération du template de format approprié
+            if format_type not in self.templates:
+                format_type = "markdown"  # Format par défaut
+                logger.warning(f"Format {format_type} non reconnu, utilisation du format markdown par défaut")
+            
+            format_template = self.templates[format_type]
+            
+            # Formatage du prompt
+            logger.debug("Formatage du prompt avec les données du programme")
+            prompt = self.table_prompt.format(
+                program_data=program_data,
+                format_template=format_template
+            )
+            
+            # Génération du tableau
+            logger.info("Invocation du LLM pour générer le tableau")
+            response = self.llm.invoke(prompt)
+            
+            logger.info(f"Tableau généré en {time.time() - start_time:.2f} secondes")
+            return response
+        except Exception as e:
+            logger.error(f"Erreur lors de la génération du tableau: {str(e)}")
+            logger.error(traceback.format_exc())
+            raise
     
     def create_weekly_schedule(self, weekly_data):
         """
@@ -136,20 +158,29 @@ class TableGeneratorAgent:
         Returns:
             Le tableau d'emploi du temps
         """
-        prompt = f"""
-        Crée un tableau hebdomadaire pour les données suivantes:
+        logger.info("Création d'un tableau d'emploi du temps hebdomadaire")
+        start_time = time.time()
         
-        {weekly_data}
-        
-        Le tableau doit inclure les jours de la semaine, le type d'entraînement pour chaque jour, 
-        et un résumé des exercices clés ou de l'objectif de la séance.
-        
-        Format le tableau en Markdown.
-        """
-        
-        response = self.llm.invoke(prompt)
-        
-        return response
+        try:
+            prompt = f"""
+            Crée un tableau hebdomadaire pour les données suivantes:
+            
+            {weekly_data}
+            
+            Le tableau doit inclure les jours de la semaine, le type d'entraînement pour chaque jour, 
+            et un résumé des exercices clés ou de l'objectif de la séance.
+            
+            Format le tableau en Markdown.
+            """
+            
+            response = self.llm.invoke(prompt)
+            
+            logger.info(f"Emploi du temps hebdomadaire généré en {time.time() - start_time:.2f} secondes")
+            return response
+        except Exception as e:
+            logger.error(f"Erreur lors de la création de l'emploi du temps: {str(e)}")
+            logger.error(traceback.format_exc())
+            raise
     
     def create_exercise_details(self, exercise_data):
         """
@@ -161,24 +192,33 @@ class TableGeneratorAgent:
         Returns:
             Le tableau détaillé
         """
-        prompt = f"""
-        Crée un tableau détaillé pour les exercices suivants:
+        logger.info("Création d'un tableau détaillé d'exercices")
+        start_time = time.time()
         
-        {exercise_data}
-        
-        Le tableau doit inclure pour chaque exercice:
-        - Nom de l'exercice
-        - Séries et répétitions ou durée
-        - Intensité ou charge
-        - Temps de récupération
-        - Notes techniques ou variantes
-        
-        Format le tableau en Markdown.
-        """
-        
-        response = self.llm.invoke(prompt)
-        
-        return response
+        try:
+            prompt = f"""
+            Crée un tableau détaillé pour les exercices suivants:
+            
+            {exercise_data}
+            
+            Le tableau doit inclure pour chaque exercice:
+            - Nom de l'exercice
+            - Séries et répétitions ou durée
+            - Intensité ou charge
+            - Temps de récupération
+            - Notes techniques ou variantes
+            
+            Format le tableau en Markdown.
+            """
+            
+            response = self.llm.invoke(prompt)
+            
+            logger.info(f"Tableau détaillé d'exercices généré en {time.time() - start_time:.2f} secondes")
+            return response
+        except Exception as e:
+            logger.error(f"Erreur lors de la création du tableau d'exercices: {str(e)}")
+            logger.error(traceback.format_exc())
+            raise
     
     def create_program_overview(self, program_structure):
         """
@@ -190,17 +230,26 @@ class TableGeneratorAgent:
         Returns:
             Le tableau récapitulatif
         """
-        prompt = f"""
-        Crée un tableau récapitulatif pour l'ensemble du programme suivant:
+        logger.info("Création d'un tableau récapitulatif du programme")
+        start_time = time.time()
         
-        {program_structure}
-        
-        Le tableau doit montrer la progression semaine par semaine, avec les objectifs principaux 
-        et les focus d'entraînement pour chaque semaine ou bloc.
-        
-        Format le tableau en Markdown.
-        """
-        
-        response = self.llm.invoke(prompt)
-        
-        return response 
+        try:
+            prompt = f"""
+            Crée un tableau récapitulatif pour l'ensemble du programme suivant:
+            
+            {program_structure}
+            
+            Le tableau doit montrer la progression semaine par semaine, avec les objectifs principaux 
+            et les focus d'entraînement pour chaque semaine ou bloc.
+            
+            Format le tableau en Markdown.
+            """
+            
+            response = self.llm.invoke(prompt)
+            
+            logger.info(f"Tableau récapitulatif généré en {time.time() - start_time:.2f} secondes")
+            return response
+        except Exception as e:
+            logger.error(f"Erreur lors de la création du tableau récapitulatif: {str(e)}")
+            logger.error(traceback.format_exc())
+            raise 

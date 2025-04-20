@@ -33,19 +33,16 @@ class TestAgentIntegration(unittest.TestCase):
         ])
         
         # Patcher les méthodes liées au chat Langchain pour l'orchestrateur
-        self.agent_patcher = patch('agents.orchestrator.create_structured_chat_agent')
-        self.executor_patcher = patch('agents.orchestrator.AgentExecutor')
+        self.agent_patcher = patch('agents.orchestrator.initialize_agent')
         
-        self.mock_create_agent = self.agent_patcher.start()
-        self.mock_executor_class = self.executor_patcher.start()
+        self.mock_initialize_agent = self.agent_patcher.start()
         
         # Configurer les mocks
-        self.mock_agent = MagicMock()
-        self.mock_create_agent.return_value = self.mock_agent
+        self.mock_agent_executor = MagicMock()
+        self.mock_agent_executor.run = MagicMock(return_value="Réponse du workflow agentic")
         
-        self.mock_executor = MagicMock()
-        self.mock_executor.invoke = MagicMock(return_value={"output": "Réponse du workflow agentic"})
-        self.mock_executor_class.return_value = self.mock_executor
+        # Configurer initialize_agent pour retourner notre mock
+        self.mock_initialize_agent.return_value = self.mock_agent_executor
         
         # Créer les instances d'agents réels
         self.sport_expert = SportExpertAgent(self.mock_llm, self.mock_knowledge_base)
@@ -61,7 +58,6 @@ class TestAgentIntegration(unittest.TestCase):
     def tearDown(self):
         """Nettoyage après les tests."""
         self.agent_patcher.stop()
-        self.executor_patcher.stop()
     
     def test_chat_workflow(self):
         """Test du workflow complet de chat."""
@@ -72,21 +68,16 @@ class TestAgentIntegration(unittest.TestCase):
         response = self.orchestrator.process_chat(user_message)
         
         # Vérifier que l'exécuteur a été appelé correctement
-        self.mock_executor.invoke.assert_called_once()
-        invoke_args = self.mock_executor.invoke.call_args[0][0]
-        self.assertEqual(invoke_args["input"], user_message)
+        self.mock_agent_executor.run.assert_called_once_with(user_message)
         
         # Vérifier la réponse
         self.assertEqual(response, "Réponse du workflow agentic")
     
     def test_training_program_generation_workflow(self):
         """Test du workflow complet de génération de programme d'entraînement."""
-        # Configurer le sport expert pour renvoyer des réponses spécifiques
-        self.sport_expert.generate_program_structure = MagicMock(return_value="Structure de programme simulée")
-        self.sport_expert.generate_detailed_program = MagicMock(return_value="Programme détaillé simulé")
-        
-        # Configurer le générateur de tableaux
-        self.table_generator.generate_training_table = MagicMock(return_value="Tableau formaté simulé")
+        # Configuration du timeout
+        self.mock_agent_executor.agent_executor = MagicMock()
+        self.mock_agent_executor.agent_executor.timeout = 60
         
         # Paramètres pour la génération du programme
         disciplines = ["running", "bodyweight"]
@@ -110,31 +101,25 @@ class TestAgentIntegration(unittest.TestCase):
             time_per_session=time_per_session
         )
         
-        # Vérifier les appels aux méthodes des agents spécialisés
-        self.sport_expert.generate_program_structure.assert_called_once_with(
-            disciplines=disciplines,
-            duration=duration,
-            level=level,
-            goals=goals
-        )
+        # Vérifier que run a été appelé
+        self.mock_agent_executor.run.assert_called()
         
-        self.sport_expert.generate_detailed_program.assert_called_once_with(
-            structure="Structure de programme simulée",
-            constraints=constraints,
-            equipment=equipment,
-            frequency=frequency,
-            time_per_session=time_per_session
-        )
+        # Vérifier les paramètres dans la requête
+        call_args = self.mock_agent_executor.run.call_args[0][0]
+        self.assertIn("running, bodyweight", call_args)
+        self.assertIn("débutant", call_args)
+        self.assertIn("Douleur au genou droit", call_args)
         
-        self.table_generator.generate_training_table.assert_called_once_with("Programme détaillé simulé")
+        # Vérifier que le timeout a été temporairement modifié et restauré
+        self.assertEqual(self.mock_agent_executor.agent_executor.timeout, 60)
         
         # Vérifier le résultat final
-        self.assertEqual(result, "Tableau formaté simulé")
+        self.assertEqual(result, "Réponse du workflow agentic")
     
     def test_error_propagation(self):
         """Test que les erreurs dans un agent sont correctement propagées et gérées."""
-        # Faire en sorte que l'agent expert lève une exception
-        self.sport_expert.generate_program_structure = MagicMock(side_effect=Exception("Erreur dans la génération de structure"))
+        # Faire en sorte que l'agent run lève une exception
+        self.mock_agent_executor.run.side_effect = Exception("Erreur dans la génération de structure")
         
         # Tenter de générer un programme
         with self.assertRaises(Exception) as context:

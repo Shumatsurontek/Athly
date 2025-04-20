@@ -1,23 +1,27 @@
-# API Framework
-fastapi==0.103.1
-uvicorn==0.23.2
-pydantic==2.3.0
-python-dotenv==1.0.0
+# API et serveur web
+fastapi>=0.103.1
+uvicorn[standard]>=0.23.2
+python-multipart>=0.0.6
+python-dotenv>=1.0.0
 
-# LangChain et IA
-langchain==0.0.311
-langchain-mistralai==0.0.2
-mistralai==0.0.8
-chromadb==0.4.15
-tiktoken==0.5.1
+# LangChain et intégrations
+langchain>=0.0.311
+langchain-core>=0.3.54
+langchain-mistralai>=0.0.2
 
-# Embeddings
-sentence-transformers==2.2.2
+# Client Mistral AI
+mistralai>=0.0.8
 
-# Outils de traitement du texte
-nltk==3.8.1
-sentencepiece==0.1.99
+# Base de connaissances vectorielle
+chromadb>=0.4.15
+tiktoken>=0.5.1
+
+# Traitement du langage naturel
+sentence-transformers>=2.2.2
+nltk>=3.8.1
+sentencepiece>=0.1.99
 
 # Utilitaires
-python-multipart==0.0.6
-requests==2.31.0 
+requests>=2.31.0
+
+# Ne pas spécifier la version de pydantic pour éviter les conflits 

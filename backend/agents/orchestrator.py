@@ -1,8 +1,7 @@
-from langchain.agents import AgentExecutor
-from langchain.agents.structured_chat import create_structured_chat_agent
+from langchain.agents import initialize_agent, AgentType
 from langchain.memory import ConversationBufferMemory
 from langchain.tools import Tool
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 import logging
 import traceback
 import time
@@ -59,18 +58,15 @@ class OrchestratorAgent:
         self.prompt = self._create_orchestrator_prompt()
         
         try:
-            # Création de l'agent avec structured_chat_agent
+            # Création de l'agent avec initialize_agent
             logger.debug("Création de l'agent avec les outils et le prompt")
-            self.agent = create_structured_chat_agent(self.llm, self.tools, self.prompt)
-            
-            # Création de l'exécuteur d'agent
-            logger.debug("Création de l'exécuteur d'agent")
-            self.executor = AgentExecutor(
-                agent=self.agent,
+            self.agent_executor = initialize_agent(
                 tools=self.tools,
-                memory=self.memory,
+                llm=self.llm,
+                agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
                 verbose=True,
-                handle_parsing_errors=lambda e: f"Je n'ai pas pu analyser correctement la réponse. Erreur: {str(e)}. Essayons une approche différente.",
+                memory=self.memory,
+                handle_parsing_errors=True,
                 max_iterations=25,
                 early_stopping_method="generate"
             )
@@ -220,38 +216,18 @@ class OrchestratorAgent:
         start_time = time.time()
         
         try:
-            # Log de l'état de la mémoire avant l'invocation
-            logger.debug("État de la mémoire avant traitement:")
-            memory_content = self.memory.load_memory_variables({})
-            logger.debug(f"Messages en mémoire: {len(memory_content.get('chat_history', []))}")
-            
             # Invocation de l'agent
             logger.info("Invocation de l'exécuteur d'agent")
             
-            # En mode DEBUG, on retourne les étapes intermédiaires
-            return_intermediate = os.getenv("DEBUG", "False").lower() == "true"
-            response = self.executor.invoke(
-                {"input": message},
-                {"return_intermediate_steps": return_intermediate}
-            )
+            response = self.agent_executor.run(message)
             
             logger.info(f"Réponse générée en {time.time() - start_time:.2f} secondes")
+            logger.debug(f"Réponse brute: {response[:100]}...")
             
-            # Si on est en mode debug et qu'on a les étapes intermédiaires
-            if return_intermediate and "intermediate_steps" in response:
-                steps = response.get("intermediate_steps", [])
-                logger.debug(f"Étapes intermédiaires: {len(steps)}")
-                # Log des étapes intermédiaires
-                for i, (action, observation) in enumerate(steps):
-                    logger.debug(f"Étape {i+1}: {action.tool} - {action.tool_input}")
-                    logger.debug(f"Observation: {observation[:100]}...")
-            
-            output = response.get("output", "Je n'ai pas pu générer de réponse.")
-            logger.debug(f"Réponse brute: {output[:100]}...")
-            
-            return output
+            return response
         except Exception as e:
-            logger.error(f"Erreur lors du traitement du message chat: {str(e)}")
+            error_msg = f"Erreur lors du traitement du message chat: {str(e)}"
+            logger.error(error_msg)
             logger.error(traceback.format_exc())
             # Retourner un message d'erreur explicite à l'utilisateur
             return f"Je suis désolé, j'ai rencontré une erreur lors du traitement de votre message. Détail technique: {str(e)}"
@@ -292,28 +268,15 @@ class OrchestratorAgent:
             """
             logger.debug(f"Requête pour la structure du programme: {query}")
             
-            # En mode DEBUG, on retourne les étapes intermédiaires
-            return_intermediate = os.getenv("DEBUG", "False").lower() == "true"
-            
             # Utiliser l'exécuteur d'agent pour générer le programme complet
-            response = self.executor.invoke(
-                {"input": query},
-                {
-                    "return_intermediate_steps": return_intermediate,
-                    "timeout": 300  # Timeout plus long pour la génération de programme (5 minutes)
-                }
-            )
+            # Avec un timeout plus long pour éviter les interruptions sur les tâches longues
+            original_timeout = self.agent_executor.agent_executor.timeout
+            self.agent_executor.agent_executor.timeout = 300  # 5 minutes
             
-            # Si on est en mode debug et qu'on a les étapes intermédiaires
-            if return_intermediate and "intermediate_steps" in response:
-                steps = response.get("intermediate_steps", [])
-                logger.debug(f"Étapes intermédiaires: {len(steps)}")
-                # Log des étapes intermédiaires
-                for i, (action, observation) in enumerate(steps):
-                    logger.debug(f"Étape {i+1}: {action.tool} - {action.tool_input}")
-                    logger.debug(f"Observation: {observation[:100]}...")
+            formatted_program = self.agent_executor.run(query)
             
-            formatted_program = response.get("output", "Je n'ai pas pu générer de programme.")
+            # Restaurer le timeout original
+            self.agent_executor.agent_executor.timeout = original_timeout
             
             logger.info(f"Programme généré en {time.time() - start_time:.2f} secondes")
             return formatted_program

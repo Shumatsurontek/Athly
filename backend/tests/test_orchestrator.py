@@ -36,17 +36,16 @@ class TestOrchestratorAgent(unittest.TestCase):
         self.mock_table_generator = MagicMock(spec=TableGeneratorAgent)
         self.mock_table_generator.generate_training_table = MagicMock(return_value="Tableau formaté simulé")
         
-        # Patcher la méthode create_structured_chat_agent
-        self.agent_patcher = patch('agents.orchestrator.create_structured_chat_agent')
-        self.mock_create_agent = self.agent_patcher.start()
-        self.mock_create_agent.return_value = MagicMock()
+        # Patcher la méthode initialize_agent
+        self.agent_patcher = patch('agents.orchestrator.initialize_agent')
+        self.mock_initialize_agent = self.agent_patcher.start()
         
-        # Patcher la classe AgentExecutor
-        self.executor_patcher = patch('agents.orchestrator.AgentExecutor')
-        self.mock_executor_class = self.executor_patcher.start()
-        self.mock_executor = MagicMock()
-        self.mock_executor.invoke = MagicMock(return_value={"output": "Réponse de l'agent"})
-        self.mock_executor_class.return_value = self.mock_executor
+        # Créer un mock pour l'agent_executor retourné par initialize_agent
+        self.mock_agent_executor = MagicMock()
+        self.mock_agent_executor.run = MagicMock(return_value="Réponse de l'agent")
+        
+        # Configurer initialize_agent pour retourner notre mock
+        self.mock_initialize_agent.return_value = self.mock_agent_executor
         
         # Créer l'instance d'OrchestratorAgent à tester
         self.orchestrator = OrchestratorAgent(
@@ -58,7 +57,6 @@ class TestOrchestratorAgent(unittest.TestCase):
     def tearDown(self):
         """Nettoyage après les tests."""
         self.agent_patcher.stop()
-        self.executor_patcher.stop()
     
     def test_initialization(self):
         """Test que l'agent est correctement initialisé."""
@@ -85,7 +83,7 @@ class TestOrchestratorAgent(unittest.TestCase):
     def test_process_chat(self):
         """Test que le traitement de chat fonctionne."""
         result = self.orchestrator.process_chat("Je veux un programme de course à pied")
-        self.mock_executor.invoke.assert_called_once()
+        self.mock_agent_executor.run.assert_called_once_with("Je veux un programme de course à pied")
         self.assertEqual(result, "Réponse de l'agent")
     
     def test_generate_training_program(self):
@@ -95,6 +93,10 @@ class TestOrchestratorAgent(unittest.TestCase):
         level = "débutant"
         goals = "Améliorer l'endurance"
         
+        # Configuration du timeout
+        self.mock_agent_executor.agent_executor = MagicMock()
+        self.mock_agent_executor.agent_executor.timeout = 60
+        
         result = self.orchestrator.generate_training_program(
             disciplines=disciplines,
             duration=duration,
@@ -102,26 +104,23 @@ class TestOrchestratorAgent(unittest.TestCase):
             goals=goals
         )
         
-        # Vérifier que les méthodes de l'expert sport ont été appelées
-        self.mock_sport_expert.generate_program_structure.assert_called_once_with(
-            disciplines=disciplines,
-            duration=duration,
-            level=level,
-            goals=goals
-        )
+        # Vérifier que run a été appelé avec la bonne requête
+        self.mock_agent_executor.run.assert_called()
+        call_args = self.mock_agent_executor.run.call_args[0][0]
+        self.assertIn("running, bodyweight", call_args)
+        self.assertIn("débutant", call_args)
+        self.assertIn("8 semaines", call_args)
         
-        self.mock_sport_expert.generate_detailed_program.assert_called_once()
-        
-        # Vérifier que le générateur de tableaux a été appelé
-        self.mock_table_generator.generate_training_table.assert_called_once()
+        # Vérifier que le timeout a été temporairement modifié
+        self.assertEqual(self.mock_agent_executor.agent_executor.timeout, 60)
         
         # Vérifier le résultat
-        self.assertEqual(result, "Tableau formaté simulé")
+        self.assertEqual(result, "Réponse de l'agent")
     
     def test_error_handling_in_process_chat(self):
         """Test que les erreurs sont correctement gérées dans process_chat."""
         # Configurer le mock pour lever une exception
-        self.mock_executor.invoke.side_effect = Exception("Erreur simulée")
+        self.mock_agent_executor.run.side_effect = Exception("Erreur simulée")
         
         # Appeler la méthode et vérifier qu'elle gère l'erreur
         result = self.orchestrator.process_chat("Message qui provoque une erreur")

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount backend source code for live reload
+      - ./backend:/app/backend
+    env_file:
+      # Pass environment variables from .env file
+      - ./.env 
+    # Dépend du service frontend pour s'assurer qu'il est lancé (optionnel mais peut aider)
+    # depends_on:
+    #   - frontend
+    networks:
+      - athly-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount frontend source code for live reload
+      - ./frontend:/app/frontend
+      # Eviter de monter node_modules de l'hôte
+      - /app/frontend/node_modules
+    environment:
+      # Assure que le serveur de dev React fonctionne bien avec Docker
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - backend # Frontend démarre après le backend (pour les appels API)
+    networks:
+      - athly-network
+
+networks:
+  athly-network:
+    driver: bridge 

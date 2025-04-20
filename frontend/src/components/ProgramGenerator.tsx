@@ -80,7 +80,7 @@ const ProgramGenerator: React.FC<ProgramGeneratorProps> = ({ onProgramGenerated 
     setIsGenerating(true);
 
     try {
-      const response = await axios.post('/api/generate-program', formData);
+      const response = await axios.post('http://backend:8000/api/generate-program', formData);
       onProgramGenerated(response.data.program);
     } catch (error) {
       console.error('Erreur lors de la génération du programme:', error);

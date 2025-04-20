@@ -14,12 +14,15 @@ from agents.expert import SportExpertAgent
 from agents.table_generator import TableGeneratorAgent
 from models.knowledge_base import KnowledgeBase
 
+# Création du répertoire de logs s'il n'existe pas
+os.makedirs("logs", exist_ok=True)
+
 # Configuration des logs
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("backend/logs/app.log"),
+        logging.FileHandler("logs/app.log"),
         logging.StreamHandler()
     ]
 )
@@ -190,7 +193,5 @@ async def global_exception_handler(request, exc):
 
 # Point d'entrée pour exécuter l'application directement
 if __name__ == "__main__":
-    # Création du répertoire de logs s'il n'existe pas
-    os.makedirs("backend/logs", exist_ok=True)
     logger.info("Démarrage du serveur Athly API")
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True) 
