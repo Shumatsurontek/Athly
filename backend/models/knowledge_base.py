@@ -1,7 +1,7 @@
-from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import TextLoader, DirectoryLoader
+from langchain_community.document_loaders import TextLoader, DirectoryLoader
 import os
 import json
 from typing import List, Dict, Any
@@ -86,7 +86,7 @@ class KnowledgeBase:
                             content += f"Description: {exercise['description']}\n"
                             content += f"Instructions: {exercise['instructions']}\n"
                             
-                            from langchain.schema import Document
+                            from langchain_core.documents import Document
                             doc = Document(
                                 page_content=content,
                                 metadata={"source": filename, "type": "exercise", "name": exercise["name"]}
@@ -316,7 +316,7 @@ class KnowledgeBase:
             content: Le contenu du document
             metadata: Les métadonnées associées au document
         """
-        from langchain.schema import Document
+        from langchain_core.documents import Document
         
         document = Document(page_content=content, metadata=metadata or {})
         

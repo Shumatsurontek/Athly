@@ -8,17 +8,26 @@ ENV PYTHONUNBUFFERED 1
 # Set the working directory in the container
 WORKDIR /app/backend
 
-# Install system dependencies if needed (example)
-# RUN apt-get update && apt-get install -y --no-install-recommends some-package && rm -rf /var/lib/apt/lists/*
+# Install system dependencies for ML libraries
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install heavy ML dependencies first to leverage Docker cache
+COPY requirements-ml.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements-ml.txt
 
 # Install Python dependencies
-# Copy only requirements first to leverage Docker cache
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the backend application code
 COPY . .
+
+# Create logs directory
+RUN mkdir -p logs
 
 # Expose the port the app runs on
 EXPOSE 8000

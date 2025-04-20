@@ -8,20 +8,12 @@ python-dotenv>=1.0.0
 langchain>=0.0.311
 langchain-core>=0.3.54
 langchain-mistralai>=0.0.2
+langchain-community>=0.0.15
 
 # Client Mistral AI
 mistralai>=0.0.8
 
-# Base de connaissances vectorielle
-chromadb>=0.4.15
-tiktoken>=0.5.1
-
-# Traitement du langage naturel
-sentence-transformers>=2.2.2
-nltk>=3.8.1
-sentencepiece>=0.1.99
-
 # Utilitaires
 requests>=2.31.0
 
-# Ne pas spécifier la version de pydantic pour éviter les conflits 
+# Note: Les dépendances ML lourdes sont dans requirements-ml.txt 

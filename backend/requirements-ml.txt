@@ -1,0 +1,14 @@
+# Dépendances lourdes (packages ML/DL)
+torch>=2.0.0
+sentence-transformers>=2.2.2
+transformers>=4.28.0
+tokenizers>=0.13.3
+accelerate>=0.20.3
+
+# Base de connaissances vectorielle
+chromadb>=0.4.15
+tiktoken>=0.5.1
+
+# NLP
+nltk>=3.8.1
+sentencepiece>=0.1.99 

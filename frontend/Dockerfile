@@ -22,4 +22,5 @@ COPY . .
 EXPOSE 3000
 
 # Command to run the development server
-CMD ["npm", "start"] 
+# Pour Next.js utiliser 'next dev' au lieu de 'next start'
+CMD ["npm", "run", "dev"] 
