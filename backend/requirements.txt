@@ -9,6 +9,7 @@ langchain>=0.0.311
 langchain-core>=0.3.54
 langchain-mistralai>=0.0.2
 langchain-community>=0.0.15
+langchain_mistralai>=0.0.1
 
 # Client Mistral AI
 mistralai>=0.0.8

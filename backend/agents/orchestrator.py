@@ -212,25 +212,18 @@ class OrchestratorAgent:
         Returns:
             La réponse générée
         """
-        logger.info(f"Traitement du message chat: {message[:50]}...")
-        start_time = time.time()
-        
+        print(f"DÉBUT TRAITEMENT MESSAGE: {message}")
         try:
-            # Invocation de l'agent
-            logger.info("Invocation de l'exécuteur d'agent")
-            
+            print("TENTATIVE EXÉCUTION AGENT")
             response = self.agent_executor.run(message)
-            
-            logger.info(f"Réponse générée en {time.time() - start_time:.2f} secondes")
-            logger.debug(f"Réponse brute: {response[:100]}...")
-            
+            print(f"RÉPONSE OBTENUE: {response[:50]}...")
             return response
         except Exception as e:
-            error_msg = f"Erreur lors du traitement du message chat: {str(e)}"
-            logger.error(error_msg)
-            logger.error(traceback.format_exc())
-            # Retourner un message d'erreur explicite à l'utilisateur
-            return f"Je suis désolé, j'ai rencontré une erreur lors du traitement de votre message. Détail technique: {str(e)}"
+            print(f"ERREUR RENCONTRÉE: {str(e)}")
+            print(f"TYPE D'ERREUR: {type(e).__name__}")
+            import traceback
+            print(f"TRACEBACK:\n{traceback.format_exc()}")
+            return f"Désolé, j'ai rencontré une erreur. Pouvez-vous réessayer?"
     
     def generate_training_program(self, disciplines, duration, level, goals, constraints="", equipment="", frequency=3, time_per_session=60):
         """

@@ -72,9 +72,10 @@ class ProgramResponse(BaseModel):
 # Dépendances pour l'injection
 def get_orchestrator():
     # Initialisation du LLM
-    from langchain.chat_models import ChatMistralAI
+    from langchain_mistralai import ChatMistralAI
     
     try:
+        print("INITIALISATION DE L'ORCHESTRATEUR")
         api_key = os.getenv("MISTRAL_API_KEY")
         if not api_key:
             logger.error("MISTRAL_API_KEY non définie dans les variables d'environnement")
@@ -88,6 +89,10 @@ def get_orchestrator():
             mistral_api_key=api_key,
             max_tokens=1024
         )
+        
+        # Testez directement le LLM avant de l'utiliser dans les agents
+        test_response = llm.invoke("Ceci est un test. Réponds simplement par 'OK'.")
+        print(f"TEST LLM: {test_response}")
         
         # Initialisation des composants
         logger.info("Initialisation de la base de connaissances")
@@ -109,8 +114,9 @@ def get_orchestrator():
         
         return orchestrator
     except Exception as e:
-        logger.error(f"Erreur lors de l'initialisation de l'orchestrateur: {str(e)}")
-        logger.error(traceback.format_exc())
+        print(f"ERREUR FATALE: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
         raise
 
 # Routes API
