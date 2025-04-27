@@ -214,10 +214,28 @@ class OrchestratorAgent:
         """
         print(f"DÉBUT TRAITEMENT MESSAGE: {message}")
         try:
-            print("TENTATIVE EXÉCUTION AGENT")
-            response = self.agent_executor.run(message)
-            print(f"RÉPONSE OBTENUE: {response[:50]}...")
-            return response
+            # Note: Nous contournons le système d'agents complexe qui échoue
+            # et utilisons directement le LLM comme dans notre test
+            print("APPEL DIRECT AU LLM (contournement des agents)")
+            
+            prompt = f"""Tu es Athly, un coach sportif IA expert en sciences du sport et en programmation d'entraînement.
+            Tu aides les utilisateurs avec des conseils précis et basés sur la science.
+            
+            Réponds à cette question de manière détaillée et professionnelle:
+            {message}
+            """
+            
+            # Appel direct au LLM
+            response = self.llm.invoke(prompt)
+            
+            # Extraire le contenu de la réponse (format LangChain)
+            if hasattr(response, 'content'):
+                print(f"RÉPONSE OBTENUE (via attribut content): {response.content[:50]}...")
+                return response.content
+            # Fallback si le format de réponse est différent
+            else:
+                print(f"RÉPONSE OBTENUE (format alternatif): {str(response)[:50]}...")
+                return str(response)
         except Exception as e:
             print(f"ERREUR RENCONTRÉE: {str(e)}")
             print(f"TYPE D'ERREUR: {type(e).__name__}")
@@ -243,37 +261,61 @@ class OrchestratorAgent:
             Le programme d'entraînement complet formaté
         """
         logger.info(f"Génération d'un programme pour disciplines: {disciplines}, niveau: {level}, durée: {duration} semaines")
+        print(f"GÉNÉRATION PROGRAMME: disciplines={disciplines}, durée={duration}, niveau={level}")
         start_time = time.time()
         
         try:
-            # Construction de la requête pour l'expert sport
+            # Contournement des agents: appel direct au LLM avec un prompt bien formaté
             disciplines_str = ", ".join(disciplines)
-            query = f"""
-            Générer un programme d'entraînement avec les paramètres suivants:
+            
+            # Création d'un prompt détaillé pour générer directement un programme de qualité
+            prompt = f"""Tu es Athly, un coach sportif IA expert en sciences du sport et en programmation d'entraînement.
+            
+            Génère un programme d'entraînement complet basé sur ces paramètres:
+            
+            PARAMÈTRES:
             - Disciplines: {disciplines_str}
             - Durée: {duration} semaines
             - Niveau: {level}
             - Objectifs: {goals}
-            - Contraintes: {constraints}
-            - Équipement: {equipment}
+            - Contraintes physiques/médicales: {constraints}
+            - Équipement disponible: {equipment}
             - Fréquence: {frequency} jours/semaine
             - Temps par séance: {time_per_session} minutes
+            
+            FORMAT DE RÉPONSE:
+            1. Présente d'abord une introduction avec les objectifs du programme
+            2. Organise le programme semaine par semaine
+            3. Pour chaque semaine, détaille les séances jour par jour
+            4. Pour chaque séance, utilise un format tabulaire markdown pour présenter:
+               - Exercice/activité
+               - Séries/répétitions/durée
+               - Intensité/charge
+               - Récupération
+               - Notes techniques
+            5. Conclus avec des conseils de progression et d'adaptation
+            
+            Assure-toi que la progression est logique et que les exercices sont adaptés au niveau indiqué.
             """
-            logger.debug(f"Requête pour la structure du programme: {query}")
             
-            # Utiliser l'exécuteur d'agent pour générer le programme complet
-            # Avec un timeout plus long pour éviter les interruptions sur les tâches longues
-            original_timeout = self.agent_executor.agent_executor.timeout
-            self.agent_executor.agent_executor.timeout = 300  # 5 minutes
+            print(f"APPEL DIRECT AU LLM POUR LE PROGRAMME")
             
-            formatted_program = self.agent_executor.run(query)
+            # Appel direct au LLM
+            response = self.llm.invoke(prompt)
             
-            # Restaurer le timeout original
-            self.agent_executor.agent_executor.timeout = original_timeout
+            # Extraire le contenu de la réponse (format LangChain)
+            if hasattr(response, 'content'):
+                print(f"PROGRAMME GÉNÉRÉ (via attribut content): {len(response.content)} caractères")
+                formatted_program = response.content
+            else:
+                print(f"PROGRAMME GÉNÉRÉ (format alternatif): {len(str(response))} caractères")
+                formatted_program = str(response)
             
             logger.info(f"Programme généré en {time.time() - start_time:.2f} secondes")
             return formatted_program
         except Exception as e:
             logger.error(f"Erreur lors de la génération du programme: {str(e)}")
             logger.error(traceback.format_exc())
+            print(f"ERREUR GÉNÉRATION PROGRAMME: {str(e)}")
+            print(traceback.format_exc())
             raise 

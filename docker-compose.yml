@@ -6,7 +6,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8000:8000"  # Exposé pour le développement direct
     volumes:
       # Mount backend source code for live reload
       - ./backend:/app/backend
@@ -23,8 +23,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
     volumes:
       # Mount frontend source code for live reload
       - ./frontend:/app/frontend
@@ -35,6 +33,19 @@ services:
       - WATCHPACK_POLLING=true
     depends_on:
       - backend # Frontend démarre après le backend (pour les appels API)
+    networks:
+      - athly-network
+    # Ne pas exposer le port directement - nginx servira l'application
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    ports:
+      - "3000:80"  # Modifier 80 -> 3000 pour éviter les problèmes de permission
+    depends_on:
+      - backend
+      - frontend
     networks:
       - athly-network
 

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -52,7 +53,7 @@ const ChatInterface: React.FC = () => {
     
     try {
       // Send message to backend
-      const response = await axios.post('http://backend:8000/api/chat', {
+      const response = await axios.post('/api/chat', {
         message: input
       });
       
@@ -103,7 +104,11 @@ const ChatInterface: React.FC = () => {
             className={`message ${message.sender === 'user' ? 'user-message' : 'ai-message'}`}
           >
             <div className="message-content">
-              <p>{message.text}</p>
+              {message.sender === 'user' ? (
+                <p>{message.text}</p>
+              ) : (
+                <ReactMarkdown>{message.text}</ReactMarkdown>
+              )}
               <span className="message-time">{formatTime(message.timestamp)}</span>
             </div>
           </div>

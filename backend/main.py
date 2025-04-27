@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
@@ -48,6 +49,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 logger.info("Configuration CORS appliquée")
+
+# Monter le répertoire static pour servir les fichiers statiques (comme test.html)
+os.makedirs("static", exist_ok=True)  # Crée le répertoire s'il n'existe pas
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Modèles de données pour les requêtes et réponses
 class ChatMessage(BaseModel):
@@ -189,6 +194,42 @@ async def generate_program(request: ProgramRequest, orchestrator: OrchestratorAg
         logger.error(error_msg)
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=error_msg)
+
+@app.post("/api/test-chat")
+async def test_chat(message: ChatMessage):
+    """
+    Route de test qui utilise directement l'API Mistral sans passer par les agents.
+    """
+    try:
+        # Log avec print pour s'assurer que c'est visible
+        print(f"TEST-CHAT: Message reçu: {message.message}")
+        
+        # Charger la clé API
+        api_key = os.getenv("MISTRAL_API_KEY")
+        if not api_key:
+            print("TEST-CHAT: ERREUR - Clé API Mistral non trouvée")
+            return {"message": "Erreur: Clé API Mistral non configurée"}
+        
+        # Initialiser directement le modèle
+        from langchain_mistralai import ChatMistralAI
+        llm = ChatMistralAI(
+            temperature=0.4,
+            model_name="mistral-large-latest", 
+            mistral_api_key=api_key,
+            max_tokens=1024
+        )
+        
+        # Appel simple au LLM
+        print("TEST-CHAT: Appel à l'API Mistral...")
+        response = llm.invoke(f"Réponds très brièvement à cette question: {message.message}")
+        print(f"TEST-CHAT: Réponse reçue: {response}")
+        
+        return {"message": str(response)}
+    except Exception as e:
+        print(f"TEST-CHAT: ERREUR - {type(e).__name__}: {str(e)}")
+        import traceback
+        print(f"TEST-CHAT: Traceback:\n{traceback.format_exc()}")
+        return {"message": f"Erreur de test: {str(e)}"}
 
 # Gestionnaire d'erreurs pour l'application
 @app.exception_handler(Exception)

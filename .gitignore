@@ -126,3 +126,8 @@ coverage/
 .coverage
 htmlcov/
 .pytest_cache/ 
+
+# Static files
+static/
+
+.devcontainer/
