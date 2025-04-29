@@ -1,13 +1,88 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
+import rehypeRaw from 'rehype-raw';
+import '../styles/Chat.css';
 
 interface Message {
   id: string;
   sender: 'user' | 'ai';
   text: string;
   timestamp: Date;
+  isProgram?: boolean;
 }
+
+// Correction des styles pour respecter les types CSSProperties
+const markdownStyles = {
+  table: {
+    borderCollapse: 'collapse' as const,
+    width: '100%',
+    marginTop: '1rem',
+    marginBottom: '1rem',
+    fontSize: '0.9rem',
+  },
+  tableHead: {
+    backgroundColor: '#4F46E5',
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  tableCell: {
+    border: '1px solid #e2e8f0',
+    padding: '0.5rem',
+  },
+  tableRow: {
+    backgroundColor: 'transparent',
+  },
+  tableRowOdd: {
+    backgroundColor: '#f8fafc',
+  },
+  tableRowHover: {
+    backgroundColor: '#f1f5f9',
+  },
+  pre: {
+    backgroundColor: '#f1f5f9',
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    overflowX: 'auto' as const,
+    fontSize: '0.9rem',
+    marginTop: '0.5rem',
+    marginBottom: '0.5rem',
+  },
+  code: {
+    backgroundColor: '#f1f5f9',
+    padding: '0.2rem 0.4rem',
+    borderRadius: '0.25rem',
+    fontSize: '0.9rem',
+  },
+  h1: {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    marginTop: '1.5rem',
+    marginBottom: '0.5rem',
+  },
+  h2: {
+    fontSize: '1.25rem',
+    fontWeight: 'bold',
+    marginTop: '1.25rem',
+    marginBottom: '0.5rem',
+  },
+  h3: {
+    fontSize: '1.125rem',
+    fontWeight: 'bold',
+    marginTop: '1rem',
+    marginBottom: '0.5rem',
+  },
+  listItem: {
+    marginLeft: '1.5rem',
+    listStyleType: 'disc',
+  },
+  orderedListItem: {
+    marginLeft: '1.5rem',
+    listStyleType: 'decimal',
+  },
+};
 
 const ChatInterface: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
@@ -20,7 +95,34 @@ const ChatInterface: React.FC = () => {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Fonction pour améliorer le formatage du texte
+  const formatMarkdown = (text: string): string => {
+    // Ajouter des sauts de ligne avant les éléments numérotés
+    let formattedText = text.replace(/(\d+\.\s+)/g, '\n\n$1');
+    
+    // Ajouter des sauts de ligne avant les éléments à puces
+    formattedText = formattedText.replace(/(\s*-\s+)/g, '\n\n- ');
+    
+    // Ajouter des sauts de ligne avant les titres
+    formattedText = formattedText.replace(/(#+\s+)/g, '\n\n$1');
+    
+    // Améliorer le formatage des tableaux en ajoutant des lignes vides
+    formattedText = formattedText.replace(/(\|[-]+\|)/g, '$1\n');
+    
+    // Assurer des espaces après la ponctuation
+    formattedText = formattedText.replace(/([,.])(\S)/g, '$1 $2');
+    
+    // Remplacer les étoiles sans espace par des étoiles avec espace pour le gras
+    formattedText = formattedText.replace(/(\S)(\*\*)(\S)/g, '$1 $2$3');
+    
+    // Séparer les sections avec des sauts de ligne
+    formattedText = formattedText.replace(/(###\s+.*?)(\n\d+\.)/g, '$1\n\n$2');
+    
+    return formattedText;
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -57,12 +159,21 @@ const ChatInterface: React.FC = () => {
         message: input
       });
       
+      // Check if the response contains a training program
+      const isProgram = input.toLowerCase().includes('programme') && 
+                        (response.data.message.includes('Programme Semaine') || 
+                         response.data.message.includes('Votre Programme Personnalisé'));
+      
+      // Format the response text
+      const formattedText = formatMarkdown(response.data.message);
+      
       // Add AI response
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         sender: 'ai',
-        text: response.data.message,
-        timestamp: new Date()
+        text: formattedText,
+        timestamp: new Date(),
+        isProgram
       };
       
       setMessages(prev => [...prev, aiMessage]);
@@ -87,6 +198,33 @@ const ChatInterface: React.FC = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const downloadAsExcel = async (programText: string, messageId: string) => {
+    if (isExporting) return;
+    
+    setIsExporting(messageId);
+    
+    try {
+      const response = await axios.post('/api/convert-to-excel', 
+        { content: programText }, 
+        { responseType: 'blob' }
+      );
+      
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'programme_entrainement.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Erreur lors de la génération du fichier Excel:', error);
+      alert('Une erreur est survenue lors de la génération du fichier Excel.');
+    } finally {
+      setIsExporting(null);
+    }
+  };
+
   return (
     <div className="chat-container">
       <div className="chat-header">
@@ -99,7 +237,7 @@ const ChatInterface: React.FC = () => {
       
       <div className="messages-container">
         {messages.map(message => (
-          <div 
+          <div
             key={message.id} 
             className={`message ${message.sender === 'user' ? 'user-message' : 'ai-message'}`}
           >
@@ -107,7 +245,23 @@ const ChatInterface: React.FC = () => {
               {message.sender === 'user' ? (
                 <p>{message.text}</p>
               ) : (
-                <ReactMarkdown>{message.text}</ReactMarkdown>
+                <div className="markdown-content">
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm, remarkBreaks]} 
+                    rehypePlugins={[rehypeRaw]}
+                  >
+                    {message.text}
+                  </ReactMarkdown>
+                  {message.isProgram && (
+                    <button 
+                      className={`download-program-btn ${isExporting === message.id ? 'loading' : ''}`}
+                      onClick={() => downloadAsExcel(message.text, message.id)}
+                      disabled={isExporting !== null}
+                    >
+                      {isExporting === message.id ? 'Génération Excel...' : 'Télécharger en Excel'}
+                    </button>
+                  )}
+                </div>
               )}
               <span className="message-time">{formatTime(message.timestamp)}</span>
             </div>
@@ -127,7 +281,7 @@ const ChatInterface: React.FC = () => {
         <div ref={messagesEndRef} />
       </div>
       
-      <form onSubmit={handleSubmit} className="chat-input-form">
+      <form className="chat-input-form" onSubmit={handleSubmit}>
         <input
           type="text"
           value={input}

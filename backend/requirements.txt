@@ -5,16 +5,25 @@ python-multipart>=0.0.6
 python-dotenv>=1.0.0
 
 # LangChain et intégrations
-langchain>=0.0.311
-langchain-core>=0.3.54
+langchain>=0.0.325
+langchain-core>=0.0.12
 langchain-mistralai>=0.0.2
-langchain-community>=0.0.15
-langchain_mistralai>=0.0.1
+langchain-community>=0.0.2
+langgraph>=0.0.20
 
 # Client Mistral AI
-mistralai>=0.0.8
+mistralai>=0.0.3
+
+# Hugging Face Hub pour Qwen
+huggingface-hub>=0.19.4
 
 # Utilitaires
 requests>=2.31.0
 
-# Note: Les dépendances ML lourdes sont dans requirements-ml.txt 
+# Note: Les dépendances ML lourdes sont dans requirements-ml.txt
+
+# Fixer les versions pour éviter les incompatibilités
+numpy==1.24.3
+pandas==2.1.0
+xlsxwriter==3.1.2
+scikit-learn==1.2.2 
