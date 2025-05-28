@@ -1,286 +1,556 @@
-/* Variables */
+/* Modern Design System Variables */
 :root {
-  --primary: #4F46E5;
-  --primary-dark: #4338CA;
-  --secondary: #10B981;
-  --text: #1F2937;
-  --text-light: #6B7280;
-  --background: #F9FAFB;
-  --white: #FFFFFF;
-  --gray-100: #F3F4F6;
-  --gray-200: #E5E7EB;
-  --gray-300: #D1D5DB;
-  --gray-400: #9CA3AF;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  /* Brand Colors - Updated from logo */
+  --primary: #FF6B9D;
+  --primary-dark: #E94B80;
+  --primary-light: #FF8FB3;
+  --secondary: #4ECDC4;
+  --secondary-dark: #45B7B8;
+  --accent: #FFD93D;
+  --accent-dark: #F4C430;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #FF6B9D 0%, #4ECDC4 100%);
+  --gradient-secondary: linear-gradient(135deg, #4ECDC4 0%, #FFD93D 100%);
+  --gradient-accent: linear-gradient(135deg, #FFD93D 0%, #FF6B9D 100%);
+  --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255, 107, 157, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%);
+  
+  /* Dark Theme */
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #1a1f35;
+  --bg-tertiary: #252b42;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --bg-glass: rgba(255, 255, 255, 0.08);
+  --bg-glass-strong: rgba(255, 255, 255, 0.12);
+  
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #b0b8c1;
+  --text-muted: #7a8394;
+  --text-inverse: #1a1f35;
+  
+  /* Shadows & Effects */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 0 30px rgba(255, 107, 157, 0.3);
+  --shadow-glow-secondary: 0 0 30px rgba(78, 205, 196, 0.3);
+  --shadow-glow-accent: 0 0 30px rgba(255, 217, 61, 0.3);
+  
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-2xl: 40px;
+  
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  
+  /* Animation */
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-/* Reset */
+/* Reset & Base Styles */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  color: var(--text);
-  background-color: var(--background);
-  line-height: 1.5;
+html {
+  scroll-behavior: smooth;
 }
 
-/* Layout */
+body {
+  font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Glass Morphism Effect */
+.glass {
+  background: var(--bg-glass);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animated Background */
+.home-page {
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.home-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(255, 92, 151, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(255, 217, 61, 0.05) 0%, transparent 50%);
+  z-index: -1;
+  animation: backgroundFloat 20s ease-in-out infinite;
+}
+
+@keyframes backgroundFloat {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.1) rotate(1deg); }
+}
+
+/* Container */
 .container {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 var(--space-md);
 }
 
-/* Buttons */
+/* Buttons with Modern Styling */
 .primary-button, .secondary-button {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 1rem;
   text-decoration: none;
-  transition: all 0.2s ease;
-  cursor: pointer;
   border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  min-width: 160px;
 }
 
 .primary-button {
-  background-color: var(--primary);
-  color: var(--white);
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: var(--shadow-md);
 }
 
 .primary-button:hover {
-  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+.primary-button:active {
+  transform: translateY(0);
 }
 
 .secondary-button {
-  background-color: var(--white);
-  color: var(--primary);
-  border: 1px solid var(--primary);
+  background: var(--bg-glass);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 .secondary-button:hover {
-  background-color: var(--gray-100);
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-/* Navigation */
-.nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0;
-}
-
-/* Hero section */
+/* Hero Section */
 .hero-section {
-  padding: 4rem 0;
+  padding: var(--space-2xl) 0;
   text-align: center;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 
 .logo-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-xl);
+  animation: fadeInUp 1s ease-out;
+}
+
+.logo-container img {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s ease;
+}
+
+.logo-container img:hover {
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
 }
 
 .logo-text {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-left: 1rem;
-  color: var(--primary);
+  font-size: 3rem;
+  font-weight: 800;
+  margin-left: var(--space-md);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeInUp 1s ease-out 0.2s both;
 }
 
 .hero-title {
-  font-size: 2.25rem;
-  margin-bottom: 1rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeInUp 1s ease-out 0.4s both;
 }
 
 .hero-subtitle {
   font-size: 1.25rem;
-  color: var(--text-light);
-  margin-bottom: 2rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xl);
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  animation: fadeInUp 1s ease-out 0.6s both;
 }
 
 .cta-buttons {
   display: flex;
-  gap: 1rem;
+  gap: var(--space-md);
   justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeInUp 1s ease-out 0.8s both;
 }
 
-/* Features section */
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Features Section */
 .features-section, .disciplines-section, .testimonials-section, .cta-section {
-  padding: 4rem 0;
+  padding: var(--space-2xl) 0;
 }
 
 .section-title {
   text-align: center;
-  font-size: 1.875rem;
-  margin-bottom: 2.5rem;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: var(--space-xl);
+  background: var(--gradient-secondary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-lg);
 }
 
 .feature-card {
-  background-color: var(--white);
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
+  background: var(--bg-glass);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.feature-card:hover::before {
+  left: 100%;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary);
 }
 
 .feature-card.active {
-  border-left: 4px solid var(--primary);
-  transform: translateY(-4px);
+  background: linear-gradient(135deg, rgba(255, 92, 151, 0.1) 0%, rgba(78, 205, 196, 0.1) 100%);
+  border-color: var(--primary);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
 }
 
 .feature-icon {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 3rem;
+  margin-bottom: var(--space-md);
+  animation: pulse 2s infinite;
 }
 
 .feature-title {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+  color: var(--text-primary);
 }
 
 .feature-description {
-  color: var(--text-light);
+  color: var(--text-secondary);
+  line-height: 1.7;
 }
 
-/* Disciplines */
+/* Disciplines Section */
 .disciplines-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-lg);
 }
 
 .discipline-item {
-  flex: 1;
-  min-width: 250px;
-  max-width: 350px;
-  background-color: var(--white);
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  box-shadow: var(--shadow);
+  background: var(--bg-glass);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
   text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.discipline-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--secondary);
 }
 
 .discipline-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 4rem;
+  margin-bottom: var(--space-md);
+  display: block;
+}
+
+.discipline-item h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+  color: var(--text-primary);
+}
+
+.discipline-item p {
+  color: var(--text-secondary);
+  line-height: 1.6;
 }
 
 /* Testimonials */
 .testimonials-slider {
-  display: flex;
-  gap: 2rem;
-  overflow-x: auto;
-  padding: 1rem 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--space-lg);
+  padding: var(--space-md) 0;
 }
 
 .testimonial-card {
-  flex: 0 0 auto;
-  width: 100%;
-  max-width: 500px;
-  background-color: var(--white);
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  box-shadow: var(--shadow);
+  background: var(--bg-glass);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
 }
 
 .testimonial-text {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
   font-style: italic;
-  margin-bottom: 1rem;
 }
 
 .testimonial-author {
-  font-weight: 500;
-  text-align: right;
+  font-weight: 600;
+  color: var(--primary);
 }
 
-/* CTA section */
+/* CTA Section */
 .cta-section {
-  background-color: var(--primary);
-  color: var(--white);
+  background: var(--gradient-dark);
+  border-radius: var(--radius-xl);
+  margin: var(--space-xl) var(--space-md);
   text-align: center;
 }
 
 .cta-title {
-  font-size: 1.875rem;
-  margin-bottom: 1rem;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
 }
 
 .cta-text {
-  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xl);
 }
 
 /* Footer */
 .footer {
-  background-color: var(--text);
-  color: var(--white);
-  padding: 3rem 0 1.5rem;
+  background: var(--bg-secondary);
+  padding: var(--space-2xl) 0 var(--space-lg);
+  margin-top: var(--space-2xl);
 }
 
 .footer-logo {
   display: flex;
   align-items: center;
-  margin-bottom: 2rem;
+  justify-content: center;
+  margin-bottom: var(--space-xl);
+}
+
+.footer-logo img {
+  border-radius: var(--radius-sm);
 }
 
 .footer-logo span {
   font-size: 1.5rem;
   font-weight: 700;
-  margin-left: 0.5rem;
+  margin-left: var(--space-sm);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.footer-links-column {
-  flex: 1;
-  min-width: 160px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-xl);
+  margin-bottom: var(--space-xl);
 }
 
 .footer-links-column h4 {
-  margin-bottom: 1rem;
-  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: var(--space-md);
 }
 
 .footer-links-column a {
   display: block;
-  color: var(--gray-300);
-  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
   text-decoration: none;
+  margin-bottom: var(--space-xs);
+  transition: color 0.3s ease;
 }
 
 .footer-links-column a:hover {
-  color: var(--white);
+  color: var(--primary);
 }
 
 .footer-bottom {
-  border-top: 1px solid var(--gray-700);
-  padding-top: 1.5rem;
   text-align: center;
-  font-size: 0.875rem;
-  color: var(--gray-400);
+  padding-top: var(--space-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .footer-links {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .features-grid,
+  .disciplines-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .testimonials-slider {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Loading Animation */
+.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Scroll Animations */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.6s ease;
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Interactive Elements */
+.interactive:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}
+
+.bounce:hover {
+  animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+  0%, 20%, 60%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  80% { transform: translateY(-5px); }
 }
 
 /* Chat Interface */
@@ -889,18 +1159,2708 @@ select:focus {
   cursor: not-allowed;
 }
 
-/* Responsive */
+/* ===== ATHLY HEADER STYLES ===== */
+.athly-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: rgba(10, 14, 26, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.athly-header.scrolled {
+  background: rgba(10, 14, 26, 0.95);
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 8px 32px rgba(0, 0, 0, 0.24);
+  height: 70px;
+}
+
+.athly-header-container {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: -webkit-fill-available;
+  min-width: fit-content;
+}
+
+.athly-logo-section {
+  display: flex;
+  align-items: center;
+  min-width: -webkit-fill-available;
+  min-width: fit-content;
+}
+
+.athly-logo-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.athly-logo-link:hover {
+  transform: translateY(-1px);
+}
+
+.athly-logo-image {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(255, 92, 151, 0.2);
+  transition: all 0.3s ease;
+}
+
+.athly-logo-text {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #FF5C97 0%, #4ECDC4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.athly-desktop-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.athly-nav-item {
+  position: relative;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  height: 48px;
+}
+
+.athly-nav-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.athly-nav-item:hover::before {
+  opacity: 1;
+}
+
+.athly-nav-item:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.athly-nav-item.active {
+  color: #FF5C97;
+  background: rgba(255, 92, 151, 0.1);
+  box-shadow: 0 0 0 1px rgba(255, 92, 151, 0.2);
+}
+
+.athly-nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #FF5C97;
+  border-radius: 50%;
+}
+
+.athly-cta-section {
+  display: flex;
+  justify-content: flex-end;
+  min-width: -webkit-fill-available;
+  min-width: fit-content;
+}
+
+.athly-cta-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #FF5C97 0%, #4ECDC4 100%);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 14px 24px;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 16px rgba(255, 92, 151, 0.25),
+    0 1px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.athly-cta-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #E94B80 0%, #45B7B8 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.athly-cta-btn:hover::before {
+  opacity: 1;
+}
+
+.athly-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 32px rgba(255, 92, 151, 0.4),
+    0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.athly-cta-btn span,
+.athly-cta-btn svg {
+  position: relative;
+  z-index: 1;
+}
+
+.athly-mobile-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  position: relative;
+  z-index: 10001;
+}
+
+.athly-mobile-toggle span {
+  width: 100%;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.athly-mobile-toggle.active span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.athly-mobile-toggle.active span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.athly-mobile-toggle.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+.athly-mobile-nav {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: min(400px, 100vw);
+  height: 100vh;
+  background: rgba(16, 20, 36, 0.98);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+}
+
+.athly-mobile-nav.open {
+  right: 0;
+}
+
+.athly-mobile-nav-content {
+  padding: 32px 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.athly-mobile-nav-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-top: 40px;
+}
+
+.athly-mobile-nav-header h3 {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.athly-close-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 32px;
+  cursor: pointer;
+  padding: 8px;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.athly-close-btn:hover {
+  color: #ffffff;
+}
+
+.athly-mobile-nav-links {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.athly-mobile-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 18px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.athly-mobile-nav-item:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.athly-mobile-nav-item.active {
+  color: #FF5C97;
+  background: rgba(255, 92, 151, 0.1);
+  border-color: rgba(255, 92, 151, 0.2);
+}
+
+.athly-active-indicator {
+  width: 8px;
+  height: 8px;
+  background: #FF5C97;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(255, 92, 151, 0.6);
+}
+
+.athly-mobile-cta {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.athly-mobile-cta-btn {
+  display: block;
+  width: 100%;
+  background: linear-gradient(135deg, #FF5C97 0%, #4ECDC4 100%);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 18px 24px;
+  border-radius: 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(255, 92, 151, 0.3);
+}
+
+.athly-mobile-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(255, 92, 151, 0.4);
+}
+
+.athly-mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 968px) {
+  .athly-desktop-nav,
+  .athly-cta-section {
+    display: none;
+  }
+
+  .athly-mobile-toggle {
+    display: flex;
+  }
+
+  .athly-header-container {
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .athly-header-container {
+    padding: 0 16px;
+  }
+
+  .athly-header {
+    height: 70px;
+  }
+
+  .athly-header.scrolled {
+    height: 60px;
+  }
+
+  .athly-mobile-nav {
+    width: 100vw;
+  }
+}
+
+@media (min-width: 969px) {
+  .athly-mobile-toggle,
+  .athly-mobile-nav,
+  .athly-mobile-overlay {
+    display: none !important;
+  }
+}
+
+/* Improved hover states */
+@media (hover: hover) {
+  .athly-nav-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* ===== ATHLY HOMEPAGE STYLES ===== */
+
+/* Homepage Container */
+.athly-home {
+  background: var(--bg-primary);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Hero Section */
+.athly-hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: var(--space-3xl) 0;
+  overflow: hidden;
+}
+
+.athly-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.athly-parallax-element {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: float 6s ease-in-out infinite;
+}
+
+.athly-parallax-1 {
+  top: 20%;
+  left: 10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 107, 157, 0.2) 0%, transparent 70%);
+  animation-delay: 0s;
+}
+
+.athly-parallax-2 {
+  bottom: 30%;
+  right: 15%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(78, 205, 196, 0.2) 0%, transparent 70%);
+  animation-delay: 2s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.athly-hero-content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: var(--space-3xl);
+  width: 100%;
+}
+
+.athly-hero-text {
+  animation: fadeInUp 1s var(--ease-out-quart);
+}
+
+.athly-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-glass);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 107, 157, 0.2);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xs) var(--space-md);
+  margin-bottom: var(--space-lg);
+  animation: slideInLeft 1s var(--ease-out-quart) 0.2s both;
+}
+
+.athly-hero-badge span {
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.athly-hero-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: var(--space-lg);
+  color: var(--text-primary);
+  animation: slideInLeft 1s var(--ease-out-quart) 0.4s both;
+}
+
+.athly-gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+.athly-hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-xl);
+  animation: slideInLeft 1s var(--ease-out-quart) 0.6s both;
+}
+
+.athly-hero-stats {
+  display: flex;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  animation: slideInLeft 1s var(--ease-out-quart) 0.8s both;
+}
+
+.athly-stat {
+  text-align: center;
+}
+
+.athly-stat-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: var(--gradient-secondary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+}
+
+.athly-stat-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: var(--space-xs);
+}
+
+.athly-hero-actions {
+  display: flex;
+  gap: var(--space-md);
+  animation: slideInLeft 1s var(--ease-out-quart) 1s both;
+}
+
+/* Hero Visual */
+.athly-hero-visual {
+  position: relative;
+  animation: fadeIn 1.5s var(--ease-out-quart) 0.5s both;
+}
+
+.athly-mascot-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.athly-mascot {
+  position: absolute;
+  animation: bounce 3s ease-in-out infinite;
+}
+
+.athly-mascot img {
+  width: 120px;
+  height: 120px;
+  filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s var(--ease-out-quart);
+}
+
+.athly-mascot:hover img {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.athly-mascot-robot {
+  top: 10%;
+  left: 20%;
+  animation-delay: 0s;
+}
+
+.athly-mascot-fox {
+  bottom: 15%;
+  right: 25%;
+  animation-delay: 1s;
+}
+
+.athly-hero-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.athly-hero-logo img {
+  width: 100px;
+  height: 100px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.athly-mascot-bubble {
+  position: absolute;
+  background: var(--bg-glass-strong);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  opacity: 0;
+  animation: bubbleIn 2s ease-in-out 2s both, bubbleFloat 3s ease-in-out 4s infinite;
+}
+
+.athly-bubble-robot {
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.athly-bubble-fox {
+  top: 120%;
+  right: 50%;
+  transform: translateX(50%);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes bubbleIn {
+  0% { opacity: 0; transform: translateY(10px) scale(0.8); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes bubbleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Button Styles */
+.athly-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-quart);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.athly-btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.athly-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+.athly-btn-secondary {
+  background: var(--bg-glass);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.athly-btn-secondary:hover {
+  background: var(--bg-glass-strong);
+  border-color: rgba(255, 107, 157, 0.4);
+  transform: translateY(-2px);
+}
+
+.athly-btn-outline {
+  background: transparent;
+  color: var(--text-primary);
+  border: 2px solid rgba(255, 107, 157, 0.3);
+}
+
+.athly-btn-outline:hover {
+  background: var(--bg-glass);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.athly-btn-large {
+  padding: var(--space-lg) var(--space-2xl);
+  font-size: 1.125rem;
+}
+
+/* Section Styles */
+.athly-features,
+.athly-disciplines,
+.athly-testimonials,
+.athly-cta {
+  padding: var(--space-3xl) 0;
+}
+
+.athly-section-header {
+  text-align: center;
+  margin-bottom: var(--space-3xl);
+}
+
+.athly-section-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
+.athly-section-subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Features Section */
+.athly-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--space-xl);
+}
+
+.athly-feature-card {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  transition: all 0.4s var(--ease-out-quart);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.athly-feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-glass);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.athly-feature-card:hover::before,
+.athly-feature-card.active::before {
+  opacity: 1;
+}
+
+.athly-feature-card:hover,
+.athly-feature-card.active {
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
+}
+
+.athly-feature-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-feature-icon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.athly-feature-mascot {
+  width: 40px;
+  height: 40px;
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+.athly-feature-mascots {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.athly-feature-mascot-small {
+  width: 30px;
+  height: 30px;
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+.athly-feature-mascot-small:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(3deg); }
+  75% { transform: rotate(-3deg); }
+}
+
+.athly-feature-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-feature-description {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-md);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-feature-progress {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+.athly-feature-progress-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s var(--ease-out-quart);
+}
+
+/* Disciplines Section */
+.athly-disciplines {
+  background: var(--bg-secondary);
+}
+
+.athly-disciplines-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-xl);
+}
+
+.athly-discipline-card {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  transition: all 0.3s var(--ease-out-quart);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.athly-discipline-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--secondary);
+  box-shadow: var(--shadow-lg), var(--shadow-glow-secondary);
+}
+
+.athly-discipline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.athly-discipline-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.athly-discipline-stats {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: var(--bg-glass);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.athly-discipline-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.athly-discipline-description {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-md);
+}
+
+.athly-discipline-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.athly-discipline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.athly-discipline-btn:hover {
+  gap: var(--space-sm);
+  color: var(--primary-light);
+}
+
+/* Testimonials Section */
+.athly-testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--space-xl);
+}
+
+.athly-testimonial-card {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  transition: all 0.3s var(--ease-out-quart);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.athly-testimonial-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: var(--gradient-primary);
+  border-radius: 50%;
+  transform: translate(50%, -50%);
+  opacity: 0.05;
+}
+
+.athly-testimonial-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-lg), var(--shadow-glow-accent);
+}
+
+.athly-testimonial-content {
+  position: relative;
+  z-index: 2;
+}
+
+.athly-testimonial-rating {
+  margin-bottom: var(--space-md);
+}
+
+.athly-star {
+  font-size: 1.25rem;
+  margin-right: var(--space-xs);
+}
+
+.athly-testimonial-text {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+  font-style: italic;
+}
+
+.athly-testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.athly-testimonial-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--gradient-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.athly-testimonial-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.athly-testimonial-role {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.athly-testimonial-mascot {
+  position: absolute;
+  bottom: var(--space-md);
+  right: var(--space-md);
+  opacity: 0.3;
+}
+
+.athly-testimonial-mascot img {
+  width: 60px;
+  height: 60px;
+}
+
+/* CTA Section */
+.athly-cta {
+  background: var(--bg-secondary);
+}
+
+.athly-cta-content {
+  text-align: center;
+  position: relative;
+  background: var(--gradient-dark);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-3xl);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.athly-cta-mascots {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.athly-cta-robot,
+.athly-cta-fox {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  opacity: 0.1;
+  animation: float 4s ease-in-out infinite;
+}
+
+.athly-cta-robot {
+  top: 10%;
+  left: 5%;
+  animation-delay: 0s;
+}
+
+.athly-cta-fox {
+  bottom: 10%;
+  right: 5%;
+  animation-delay: 2s;
+}
+
+.athly-cta-text {
+  position: relative;
+  z-index: 2;
+  margin-bottom: var(--space-xl);
+}
+
+.athly-cta-title {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
+.athly-cta-subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.athly-cta-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
+}
+
+/* Footer */
+.athly-footer {
+  background: var(--bg-tertiary);
+  padding: var(--space-3xl) 0 var(--space-xl);
+}
+
+.athly-footer-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-3xl);
+  margin-bottom: var(--space-xl);
+}
+
+.athly-footer-brand {
+  text-align: center;
+}
+
+.athly-footer-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.athly-footer-logo img {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-sm);
+}
+
+.athly-footer-logo span {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.athly-footer-tagline {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+}
+
+.athly-footer-mascots {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+}
+
+.athly-footer-mascots img {
+  width: 40px;
+  height: 40px;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.athly-footer-mascots img:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.athly-footer-links {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xl);
+}
+
+.athly-footer-column h4 {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+}
+
+.athly-footer-column a {
+  display: block;
+  color: var(--text-secondary);
+  text-decoration: none;
+  margin-bottom: var(--space-sm);
+  transition: color 0.3s ease;
+}
+
+.athly-footer-column a:hover {
+  color: var(--primary);
+}
+
+.athly-footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+
+.athly-footer-badges {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.athly-badge {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Scroll Reveal */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s var(--ease-out-quart);
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .athly-hero-content {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    text-align: center;
+  }
+  
+  .athly-hero-stats {
+    justify-content: center;
+  }
+  
+  .athly-footer-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .athly-footer-links {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
-  .cta-buttons {
+  .athly-hero-actions,
+  .athly-cta-actions {
     flex-direction: column;
-    gap: 1rem;
+    align-items: center;
   }
+  
+  .athly-features-grid,
+  .athly-disciplines-grid,
+  .athly-testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .athly-footer-links {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+  
+  .athly-footer-bottom {
+    flex-direction: column;
+    gap: var(--space-md);
+    text-align: center;
+  }
+  
+  .athly-mascot-container {
+    height: 300px;
+  }
+  
+  .athly-mascot img {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .athly-hero-logo img {
+    width: 70px;
+    height: 70px;
+  }
+}
 
-  .footer-links {
+@media (max-width: 640px) {
+  .athly-hero {
+    padding: var(--space-xl) 0;
+  }
+  
+  .athly-features,
+  .athly-disciplines,
+  .athly-testimonials,
+  .athly-cta {
+    padding: var(--space-xl) 0;
+  }
+  
+  .athly-hero-stats {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+}
+
+@media (min-width: 969px) {
+  .athly-mobile-toggle,
+  .athly-mobile-nav,
+  .athly-mobile-overlay {
+    display: none !important;
+  }
+}
+
+/* ===== ATHLY CHAT INTERFACE STYLES ===== */
+
+.athly-chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Chat Header */
+.athly-chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-lg) var(--space-xl);
+  background: var(--bg-glass);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.athly-chat-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.athly-chat-mascot {
+  position: relative;
+}
+
+.athly-mascot-animated {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid var(--primary);
+  animation: mascotPulse 2s ease-in-out infinite;
+  transition: all 0.3s var(--ease-out-quart);
+}
+
+.athly-mascot-animated:hover {
+  transform: scale(1.1) rotate(5deg);
+  border-color: var(--secondary);
+}
+
+@keyframes mascotPulse {
+  0%, 100% { 
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0 rgba(255, 107, 157, 0.4);
+  }
+  50% { 
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 10px rgba(78, 205, 196, 0);
+  }
+}
+
+.athly-chat-info h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.athly-chat-info p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.athly-chat-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.athly-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--bg-glass);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(78, 205, 196, 0.3);
+}
+
+.athly-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--secondary);
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.athly-status-indicator span {
+  font-size: 0.75rem;
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+/* Messages Container */
+.athly-messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  scroll-behavior: smooth;
+}
+
+.athly-messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.athly-messages-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.athly-messages-container::-webkit-scrollbar-thumb {
+  background: var(--gradient-primary);
+  border-radius: 3px;
+}
+
+.athly-messages-container::-webkit-scrollbar-thumb:hover {
+  background: var(--gradient-secondary);
+}
+
+/* Messages */
+.athly-message {
+  display: flex;
+  gap: var(--space-md);
+  animation: messageSlideIn 0.4s var(--ease-out-quart);
+}
+
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.athly-ai-message {
+  align-self: flex-start;
+  max-width: 85%;
+}
+
+.athly-user-message {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+  max-width: 75%;
+}
+
+.athly-message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid var(--primary);
+  animation: avatarFloat 3s ease-in-out infinite;
+}
+
+@keyframes avatarFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-2px); }
+}
+
+.athly-message-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.athly-user-avatar {
+  background: var(--gradient-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: var(--secondary);
+}
+
+.athly-user-icon {
+  font-size: 1.25rem;
+  color: white;
+}
+
+.athly-message-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.athly-message-bubble {
+  background: var(--bg-glass);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.athly-user-message .athly-message-bubble {
+  background: var(--gradient-primary);
+  border-color: transparent;
+  color: white;
+}
+
+.athly-message-bubble::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-glass);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.athly-ai-message:hover .athly-message-bubble::before {
+  opacity: 1;
+}
+
+.athly-markdown-content {
+  position: relative;
+  z-index: 2;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.athly-user-message .athly-markdown-content {
+  color: white;
+}
+
+.athly-message-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: var(--space-xs);
+}
+
+.athly-user-message .athly-message-time {
+  text-align: left;
+}
+
+/* Program Actions */
+.athly-program-actions {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--gradient-accent);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-quart);
+}
+
+.athly-export-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.athly-export-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Typing Indicator */
+.athly-typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  color: var(--text-secondary);
+}
+
+.athly-typing-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.athly-typing-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: typingDot 1.4s infinite ease-in-out;
+}
+
+.athly-typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.athly-typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingDot {
+  0%, 60%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  30% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+.athly-typing-text {
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* Suggestions */
+.athly-suggestions {
+  padding: var(--space-lg) var(--space-xl);
+  background: var(--bg-secondary);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.athly-suggestions h4 {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.athly-suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.athly-suggestion-chip {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm) var(--space-md);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-quart);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.athly-suggestion-chip:hover {
+  background: var(--bg-glass-strong);
+  border-color: var(--primary);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+/* Input Section */
+.athly-chat-input-section {
+  padding: var(--space-lg) var(--space-xl);
+  background: var(--bg-secondary);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.athly-chat-form {
+  margin-bottom: var(--space-md);
+}
+
+.athly-input-container {
+  display: flex;
+  gap: var(--space-sm);
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  transition: all 0.3s var(--ease-out-quart);
+}
+
+.athly-input-container:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.2);
+}
+
+.athly-chat-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+}
+
+.athly-chat-input::placeholder {
+  color: var(--text-muted);
+}
+
+.athly-send-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--gradient-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-quart);
+  flex-shrink: 0;
+}
+
+.athly-send-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+.athly-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.athly-chat-footer {
+  text-align: center;
+}
+
+.athly-chat-footer p {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+/* Spinners */
+.athly-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+}
+
+.athly-spinner-small {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .athly-chat-header {
+    padding: var(--space-md);
+  }
+  
+  .athly-chat-title {
+    gap: var(--space-sm);
+  }
+  
+  .athly-chat-info h1 {
+    font-size: 1.25rem;
+  }
+  
+  .athly-chat-info p {
+    font-size: 0.75rem;
+  }
+  
+  .athly-messages-container {
+    padding: var(--space-md);
+  }
+  
+  .athly-ai-message,
+  .athly-user-message {
+    max-width: 95%;
+  }
+  
+  .athly-message-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .athly-suggestions {
+    padding: var(--space-md);
+  }
+  
+  .athly-suggestion-chips {
     flex-direction: column;
   }
-
-  .form-row {
+  
+  .athly-suggestion-chip {
+    text-align: center;
+  }
+  
+  .athly-chat-input-section {
+    padding: var(--space-md);
+  }
+  
+  .athly-input-container {
     flex-direction: column;
+    gap: var(--space-sm);
+  }
+  
+  .athly-send-btn {
+    width: 100%;
+    height: 48px;
+    border-radius: var(--radius-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .athly-chat-header {
+    flex-direction: column;
+    gap: var(--space-sm);
+    text-align: center;
+  }
+  
+  .athly-message-bubble {
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .athly-mascot-animated {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* ===== ATHLY PRICING PAGE STYLES ===== */
+
+/* Pricing Section */
+.athly-pricing {
+  padding: var(--space-3xl) 0;
+  background: var(--bg-secondary);
+}
+
+.athly-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--space-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.athly-pricing-card {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  transition: all 0.4s var(--ease-out-quart);
+  position: relative;
+  overflow: hidden;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  text-align: center;
+}
+
+.athly-pricing-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-glass);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.athly-pricing-card:hover::before {
+  opacity: 1;
+}
+
+.athly-pricing-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
+}
+
+.athly-pricing-card.popular {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-glow);
+  transform: scale(1.02);
+}
+
+.athly-pricing-card.popular::before {
+  opacity: 0.5;
+}
+
+.athly-popular-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gradient-primary);
+  color: white;
+  padding: var(--space-xs) var(--space-lg);
+  border-radius: var(--radius-xl);
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+}
+
+.athly-pricing-header {
+  margin-bottom: var(--space-xl);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-pricing-mascot {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+}
+
+.athly-pricing-mascot img {
+  width: 60px;
+  height: 60px;
+  animation: bounce 3s ease-in-out infinite;
+}
+
+.athly-mascot-duo {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.athly-mascot-duo img {
+  width: 45px;
+  height: 45px;
+}
+
+.athly-pricing-name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.athly-pricing-description {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+  font-size: 1rem;
+}
+
+.athly-pricing-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-xl);
+}
+
+.athly-price-amount {
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.athly-price-frequency {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.athly-pricing-features {
+  list-style: none;
+  padding: 0;
+  margin-bottom: var(--space-xl);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-pricing-features li {
+  display: flex;
+  align-items: center;
+  padding: var(--space-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.athly-check-icon {
+  color: var(--secondary);
+  font-weight: bold;
+  margin-right: var(--space-md);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.athly-pricing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  background: var(--gradient-primary);
+  color: white;
+  text-decoration: none;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s var(--ease-out-quart);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-pricing-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+/* FAQ Section */
+.athly-faq {
+  padding: var(--space-3xl) 0;
+}
+
+.athly-faq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--space-xl);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.athly-faq-card {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  transition: all 0.3s var(--ease-out-quart);
+  position: relative;
+  overflow: hidden;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.athly-faq-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100px;
+  height: 100px;
+  background: var(--gradient-secondary);
+  border-radius: 50%;
+  opacity: 0.05;
+  transition: all 0.3s ease;
+}
+
+.athly-faq-card:hover::after {
+  opacity: 0.1;
+  transform: scale(1.2);
+}
+
+.athly-faq-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-lg), var(--shadow-glow-accent);
+}
+
+.athly-faq-icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-md);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.athly-faq-question {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-faq-answer {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: var(--space-md);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-faq-mascot {
+  position: absolute;
+  bottom: var(--space-md);
+  right: var(--space-md);
+  opacity: 0.2;
+}
+
+.athly-faq-mascot img {
+  width: 50px;
+  height: 50px;
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Responsive Design for Pricing */
+@media (max-width: 1024px) {
+  .athly-pricing-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+  
+  .athly-pricing-card.popular {
+    transform: none;
+  }
+  
+  .athly-faq-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .athly-pricing-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+  
+  .athly-pricing-card {
+    padding: var(--space-lg);
+  }
+  
+  .athly-price-amount {
+    font-size: 2.5rem;
+  }
+  
+  .athly-pricing-features li {
+    padding: var(--space-xs) 0;
+    font-size: 0.9rem;
+  }
+  
+  .athly-faq-card {
+    padding: var(--space-lg);
+  }
+}
+
+@media (max-width: 640px) {
+  .athly-pricing {
+    padding: var(--space-xl) 0;
+  }
+  
+  .athly-faq {
+    padding: var(--space-xl) 0;
+  }
+  
+  .athly-mascot-duo img {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .athly-pricing-mascot img {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+/* ===== ATHLY CONTACT PAGE STYLES ===== */
+
+/* Contact Methods Section */
+.athly-contact-methods {
+  padding: var(--space-3xl) 0;
+  background: var(--bg-secondary);
+}
+
+.athly-contact-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-xl);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.athly-contact-method-card {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  transition: all 0.4s var(--ease-out-quart);
+  position: relative;
+  overflow: hidden;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  text-decoration: none;
+  text-align: center;
+  color: inherit;
+}
+
+.athly-contact-method-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-glass);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.athly-contact-method-card:hover::before {
+  opacity: 1;
+}
+
+.athly-contact-method-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
+}
+
+.athly-contact-method-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-contact-method-mascot img {
+  width: 50px;
+  height: 50px;
+  animation: bounce 3s ease-in-out infinite;
+}
+
+.athly-contact-method-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.athly-contact-method-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-contact-method-description {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-contact-method-value {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: var(--space-lg);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-contact-method-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--accent);
+  font-weight: 500;
+  font-size: 0.9rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Contact Form Section */
+.athly-contact-form-section {
+  padding: var(--space-3xl) 0;
+}
+
+.athly-contact-form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-2xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.athly-contact-form-container {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.athly-contact-form-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-glass);
+  opacity: 0.3;
+}
+
+.athly-form-header {
+  margin-bottom: var(--space-xl);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-form-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.athly-form-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.athly-contact-form {
+  display: grid;
+  gap: var(--space-lg);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+.athly-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.athly-form-group label {
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: var(--space-sm);
+  font-size: 0.95rem;
+}
+
+.athly-form-input,
+.athly-form-select,
+.athly-form-textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s var(--ease-out-quart);
+  font-family: inherit;
+}
+
+.athly-form-input:focus,
+.athly-form-select:focus,
+.athly-form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.athly-form-input::placeholder,
+.athly-form-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.athly-form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Success Message */
+.athly-success-message {
+  text-align: center;
+  padding: var(--space-2xl);
+  position: relative;
+  z-index: 2;
+}
+
+.athly-success-animation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.athly-success-icon {
+  font-size: 3rem;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.athly-success-mascot {
+  width: 60px;
+  height: 60px;
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+.athly-success-message h3 {
+  color: var(--secondary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+
+.athly-success-message p {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+}
+
+/* Contact Info Sidebar */
+.athly-contact-info {
+  display: grid;
+  gap: var(--space-xl);
+  height: fit-content;
+}
+
+.athly-contact-info-card {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.athly-contact-info-card h3 {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: var(--space-lg);
+  font-size: 1.25rem;
+}
+
+.athly-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.athly-info-item:last-child {
+  margin-bottom: 0;
+}
+
+.athly-info-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: var(--space-xs);
+}
+
+.athly-info-item h4 {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+  font-size: 1rem;
+}
+
+.athly-info-item p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Social Section */
+.athly-social-section {
+  background: var(--bg-glass);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.athly-social-section h3 {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: var(--space-lg);
+  font-size: 1.25rem;
+}
+
+.athly-social-links {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.athly-social-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: all 0.3s var(--ease-out-quart);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.athly-social-link:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.athly-social-icon {
+  font-size: 1.25rem;
+}
+
+/* Contact Mascots */
+.athly-contact-mascots {
+  position: relative;
+  text-align: center;
+  margin-top: var(--space-lg);
+}
+
+.athly-contact-mascot {
+  width: 80px;
+  height: 80px;
+  animation: float 4s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+/* Spinner for loading state */
+.athly-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: var(--space-sm);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design for Contact */
+@media (max-width: 1024px) {
+  .athly-contact-form-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+  
+  .athly-contact-methods-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .athly-contact-form-container {
+    padding: var(--space-xl);
+  }
+  
+  .athly-form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .athly-contact-methods-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .athly-contact-method-header {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  
+  .athly-contact-method-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .athly-social-links {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .athly-contact-form-section {
+    padding: var(--space-xl) 0;
+  }
+  
+  .athly-contact-methods {
+    padding: var(--space-xl) 0;
+  }
+  
+  .athly-form-title {
+    font-size: 1.5rem;
+  }
+  
+  .athly-contact-method-mascot img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .athly-social-links {
+    grid-template-columns: 1fr;
   }
 } 
