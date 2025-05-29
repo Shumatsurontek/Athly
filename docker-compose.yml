@@ -8,11 +8,9 @@ services:
     volumes:
       # Mount backend source code for live reload
       - ./backend:/app/backend
-    environment:
-      # Environment variables with defaults
-      - MISTRAL_API_KEY=${MISTRAL_API_KEY:-your_mistral_api_key_here}
-      - DEBUG=${DEBUG:-True}
-      - PYTHONPATH=/app/backend
+    env_file:
+      # Pass environment variables from .env file
+      - ./.env 
     # Dépend du service frontend pour s'assurer qu'il est lancé (optionnel mais peut aider)
     # depends_on:
     #   - frontend
@@ -24,7 +22,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Exposé directement pour le développement
     volumes:
       # Mount frontend source code for live reload
       - ./frontend:/app/frontend
@@ -44,7 +42,7 @@ services:
   #     context: .
   #     dockerfile: nginx.Dockerfile
   #   ports:
-  #     - "80:80"
+  #     - "3000:80"
   #   depends_on:
   #     - backend
   #     - frontend

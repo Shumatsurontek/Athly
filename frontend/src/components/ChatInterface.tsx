@@ -4,7 +4,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import rehypeRaw from 'rehype-raw';
-import '../styles/Chat.css';
 
 interface Message {
   id: string;
@@ -24,55 +23,62 @@ const markdownStyles = {
     fontSize: '0.9rem',
   },
   tableHead: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: '#FF6B9D',
     color: 'white',
     fontWeight: 'bold',
   },
   tableCell: {
-    border: '1px solid #e2e8f0',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
     padding: '0.5rem',
   },
   tableRow: {
     backgroundColor: 'transparent',
   },
   tableRowOdd: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: 'rgba(255, 255, 255, 0.02)',
   },
   tableRowHover: {
-    backgroundColor: '#f1f5f9',
+    backgroundColor: 'rgba(255, 107, 157, 0.1)',
   },
   pre: {
-    backgroundColor: '#f1f5f9',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     padding: '1rem',
     borderRadius: '0.5rem',
     overflowX: 'auto' as const,
     fontSize: '0.9rem',
     marginTop: '0.5rem',
     marginBottom: '0.5rem',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
   },
   code: {
-    backgroundColor: '#f1f5f9',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     padding: '0.2rem 0.4rem',
     borderRadius: '0.25rem',
     fontSize: '0.9rem',
+    color: '#4ECDC4',
   },
   h1: {
     fontSize: '1.5rem',
     fontWeight: 'bold',
     marginTop: '1.5rem',
     marginBottom: '0.5rem',
+    background: 'linear-gradient(135deg, #FF6B9D, #4ECDC4)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
   },
   h2: {
     fontSize: '1.25rem',
     fontWeight: 'bold',
     marginTop: '1.25rem',
     marginBottom: '0.5rem',
+    color: '#4ECDC4',
   },
   h3: {
     fontSize: '1.125rem',
     fontWeight: 'bold',
     marginTop: '1rem',
     marginBottom: '0.5rem',
+    color: '#FFD93D',
   },
   listItem: {
     marginLeft: '1.5rem',
@@ -89,38 +95,36 @@ const ChatInterface: React.FC = () => {
     {
       id: '1',
       sender: 'ai',
-      text: "Bonjour ! Je suis votre coach Athly. Comment puis-je vous aider avec votre entraînement aujourd'hui ?",
+      text: "Salut ! 🤖 Je suis votre coach IA Athly ! Prêt à transformer votre entraînement ? Posez-moi vos questions sur le fitness, la course à pied, la musculation ou demandez-moi de créer un programme personnalisé !",
       timestamp: new Date()
     }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState<string | null>(null);
+  const [currentMascot, setCurrentMascot] = useState<'robot' | 'fox'>('robot');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Fonction pour améliorer le formatage du texte
+  // Suggestions prédéfinies améliorées
+  const suggestions = [
+    "Créer un programme de course débutant",
+    "Programme musculation prise de masse",
+    "Exercices poids du corps pour débutants",
+    "Plan entraînement marathon",
+    "Conseils nutrition pré-entraînement",
+    "Comment éviter les blessures ?",
+    "Programme HIIT 20 minutes",
+    "Routine étirements post-workout"
+  ];
+
   const formatMarkdown = (text: string): string => {
-    // Ajouter des sauts de ligne avant les éléments numérotés
     let formattedText = text.replace(/(\d+\.\s+)/g, '\n\n$1');
-    
-    // Ajouter des sauts de ligne avant les éléments à puces
     formattedText = formattedText.replace(/(\s*-\s+)/g, '\n\n- ');
-    
-    // Ajouter des sauts de ligne avant les titres
     formattedText = formattedText.replace(/(#+\s+)/g, '\n\n$1');
-    
-    // Améliorer le formatage des tableaux en ajoutant des lignes vides
     formattedText = formattedText.replace(/(\|[-]+\|)/g, '$1\n');
-    
-    // Assurer des espaces après la ponctuation
     formattedText = formattedText.replace(/([,.])(\S)/g, '$1 $2');
-    
-    // Remplacer les étoiles sans espace par des étoiles avec espace pour le gras
     formattedText = formattedText.replace(/(\S)(\*\*)(\S)/g, '$1 $2$3');
-    
-    // Séparer les sections avec des sauts de ligne
     formattedText = formattedText.replace(/(###\s+.*?)(\n\d+\.)/g, '$1\n\n$2');
-    
     return formattedText;
   };
 
@@ -132,8 +136,21 @@ const ChatInterface: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    // Changer de mascotte aléatoirement
+    const interval = setInterval(() => {
+      setCurrentMascot(prev => prev === 'robot' ? 'fox' : 'robot');
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setInput(suggestion);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -141,7 +158,6 @@ const ChatInterface: React.FC = () => {
     
     if (!input.trim()) return;
     
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       sender: 'user',
@@ -154,20 +170,16 @@ const ChatInterface: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Send message to backend
       const response = await axios.post('/api/chat', {
         message: input
       });
       
-      // Check if the response contains a training program
       const isProgram = input.toLowerCase().includes('programme') && 
                         (response.data.message.includes('Programme Semaine') || 
                          response.data.message.includes('Votre Programme Personnalisé'));
       
-      // Format the response text
       const formattedText = formatMarkdown(response.data.message);
       
-      // Add AI response
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         sender: 'ai',
@@ -180,11 +192,10 @@ const ChatInterface: React.FC = () => {
     } catch (error) {
       console.error('Erreur lors de la communication avec l\'IA:', error);
       
-      // Add error message
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         sender: 'ai',
-        text: "Désolé, j'ai rencontré une erreur. Pouvez-vous réessayer?",
+        text: "Oups ! 🤖 J'ai rencontré un petit problème technique. Pouvez-vous réessayer ? Je suis là pour vous aider !",
         timestamp: new Date()
       };
       
@@ -194,130 +205,256 @@ const ChatInterface: React.FC = () => {
     }
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
-
-  const downloadAsExcel = async (programText: string, messageId: string) => {
-    if (isExporting) return;
-    
+  const exportToPDF = async (messageId: string) => {
     setIsExporting(messageId);
     
     try {
-      const response = await axios.post('/api/convert-to-excel', 
-        { content: programText }, 
-        { responseType: 'blob' }
-      );
-      
-      // Create download link
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const message = messages.find(m => m.id === messageId);
+      if (!message) return;
+
+      const response = await axios.post('/api/export-pdf', {
+        content: message.text,
+        filename: `programme-athly-${new Date().toISOString().split('T')[0]}.pdf`
+      }, {
+        responseType: 'blob'
+      });
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'programme_entrainement.xlsx');
+      link.download = `programme-athly-${new Date().toISOString().split('T')[0]}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Erreur lors de la génération du fichier Excel:', error);
-      alert('Une erreur est survenue lors de la génération du fichier Excel.');
+      console.error('Erreur lors de l\'export PDF:', error);
     } finally {
       setIsExporting(null);
     }
   };
 
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   return (
-    <div className="chat-container">
-      <div className="chat-header">
-        <div className="chat-title">
-          <img src="/logo.png" alt="Athly Logo" className="chat-logo" />
-          <h2>Coach Athly</h2>
+    <div className="athly-chat-container">
+      {/* Header amélioré avec mascotte */}
+      <div className="athly-chat-header">
+        <div className="athly-chat-title">
+          <div className="athly-chat-mascot">
+            <img 
+              src={currentMascot === 'robot' ? "/robot.png" : "/fox.png"} 
+              alt={currentMascot === 'robot' ? "Robot Coach" : "Fox Athly"} 
+              className="athly-mascot-animated"
+            />
+          </div>
+          <div className="athly-chat-info">
+            <h1>Coach IA Athly</h1>
+            <p>Votre assistant personnel pour l'entraînement</p>
+          </div>
         </div>
-        <p className="chat-subtitle">Votre coach IA personnel</p>
+        <div className="athly-chat-status">
+          <div className="athly-status-indicator">
+            <div className="athly-status-dot"></div>
+            <span>En ligne</span>
+          </div>
+        </div>
       </div>
-      
-      <div className="messages-container">
-        {messages.map(message => (
-          <div
+
+      {/* Messages avec design amélioré */}
+      <div className="athly-messages-container">
+        {messages.map((message) => (
+          <div 
             key={message.id} 
-            className={`message ${message.sender === 'user' ? 'user-message' : 'ai-message'}`}
+            className={`athly-message ${message.sender === 'user' ? 'athly-user-message' : 'athly-ai-message'}`}
           >
-            <div className="message-content">
-              {message.sender === 'user' ? (
-                <p>{message.text}</p>
-              ) : (
-                <div className="markdown-content">
-                  <ReactMarkdown 
-                    remarkPlugins={[remarkGfm, remarkBreaks]} 
+            {message.sender === 'ai' && (
+              <div className="athly-message-avatar">
+                <img src="/robot.png" alt="Coach IA" />
+              </div>
+            )}
+            
+            <div className="athly-message-content">
+              <div className="athly-message-bubble">
+                <div className="athly-markdown-content">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm, remarkBreaks]}
                     rehypePlugins={[rehypeRaw]}
+                    components={{
+                      table: ({ children }) => (
+                        <table style={markdownStyles.table}>
+                          {children}
+                        </table>
+                      ),
+                      thead: ({ children }) => (
+                        <thead style={markdownStyles.tableHead}>
+                          {children}
+                        </thead>
+                      ),
+                      th: ({ children }) => (
+                        <th style={markdownStyles.tableCell}>
+                          {children}
+                        </th>
+                      ),
+                      td: ({ children }) => (
+                        <td style={markdownStyles.tableCell}>
+                          {children}
+                        </td>
+                      ),
+                      tr: ({ children, ...props }) => (
+                        <tr style={markdownStyles.tableRow}>
+                          {children}
+                        </tr>
+                      ),
+                      pre: ({ children }) => (
+                        <pre style={markdownStyles.pre}>
+                          {children}
+                        </pre>
+                      ),
+                      code: ({ children, inline }) => (
+                        inline ? (
+                          <code style={markdownStyles.code}>
+                            {children}
+                          </code>
+                        ) : (
+                          <code>{children}</code>
+                        )
+                      ),
+                      h1: ({ children }) => (
+                        <h1 style={markdownStyles.h1}>
+                          {children}
+                        </h1>
+                      ),
+                      h2: ({ children }) => (
+                        <h2 style={markdownStyles.h2}>
+                          {children}
+                        </h2>
+                      ),
+                      h3: ({ children }) => (
+                        <h3 style={markdownStyles.h3}>
+                          {children}
+                        </h3>
+                      ),
+                      li: ({ children, ordered }) => (
+                        <li style={ordered ? markdownStyles.orderedListItem : markdownStyles.listItem}>
+                          {children}
+                        </li>
+                      ),
+                    }}
                   >
                     {message.text}
                   </ReactMarkdown>
-                  {message.isProgram && (
-                    <button 
-                      className={`download-program-btn ${isExporting === message.id ? 'loading' : ''}`}
-                      onClick={() => downloadAsExcel(message.text, message.id)}
-                      disabled={isExporting !== null}
-                    >
-                      {isExporting === message.id ? 'Génération Excel...' : 'Télécharger en Excel'}
-                    </button>
-                  )}
                 </div>
-              )}
-              <span className="message-time">{formatTime(message.timestamp)}</span>
+                
+                {message.isProgram && (
+                  <div className="athly-program-actions">
+                    <button
+                      onClick={() => exportToPDF(message.id)}
+                      disabled={isExporting === message.id}
+                      className="athly-export-btn"
+                    >
+                      {isExporting === message.id ? (
+                        <>
+                          <div className="athly-spinner"></div>
+                          Export en cours...
+                        </>
+                      ) : (
+                        <>
+                          📄 Télécharger PDF
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+              <div className="athly-message-time">
+                {formatTime(message.timestamp)}
+              </div>
             </div>
+
+            {message.sender === 'user' && (
+              <div className="athly-message-avatar athly-user-avatar">
+                <div className="athly-user-icon">👤</div>
+              </div>
+            )}
           </div>
         ))}
-        
+
         {isLoading && (
-          <div className="message ai-message">
-            <div className="message-content typing-indicator">
-              <span></span>
-              <span></span>
-              <span></span>
+          <div className="athly-message athly-ai-message">
+            <div className="athly-message-avatar">
+              <img src="/robot.png" alt="Coach IA" />
+            </div>
+            <div className="athly-message-content">
+              <div className="athly-message-bubble">
+                <div className="athly-typing-indicator">
+                  <div className="athly-typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <span className="athly-typing-text">Le coach réfléchit...</span>
+                </div>
+              </div>
             </div>
           </div>
         )}
         
         <div ref={messagesEndRef} />
       </div>
-      
-      <form className="chat-input-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={input}
-          onChange={handleInputChange}
-          placeholder="Posez une question à votre coach..."
-          disabled={isLoading}
-        />
-        <button type="submit" disabled={isLoading || !input.trim()}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"></line>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-          </svg>
-        </button>
-      </form>
-      
-      <div className="chat-suggestions">
-        <p>Suggestions:</p>
-        <div className="suggestion-chips">
-          <button 
-            onClick={() => setInput("Créez-moi un programme de course à pied sur 8 semaines")}
-            className="suggestion-chip"
-          >
-            Programme de course 8 semaines
-          </button>
-          <button 
-            onClick={() => setInput("Comment améliorer ma technique de squat ?")}
-            className="suggestion-chip"
-          >
-            Améliorer ma technique de squat
-          </button>
-          <button 
-            onClick={() => setInput("Quels exercices au poids du corps pour renforcer mon dos ?")}
-            className="suggestion-chip"
-          >
-            Exercices de dos au poids du corps
-          </button>
+
+      {/* Suggestions améliorées */}
+      {messages.length <= 1 && (
+        <div className="athly-suggestions">
+          <h4>💡 Suggestions pour commencer :</h4>
+          <div className="athly-suggestion-chips">
+            {suggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                className="athly-suggestion-chip"
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Input amélioré */}
+      <div className="athly-chat-input-section">
+        <form onSubmit={handleSubmit} className="athly-chat-form">
+          <div className="athly-input-container">
+            <input
+              type="text"
+              value={input}
+              onChange={handleInputChange}
+              placeholder="Posez votre question au coach IA..."
+              disabled={isLoading}
+              className="athly-chat-input"
+            />
+            <button
+              type="submit"
+              disabled={!input.trim() || isLoading}
+              className="athly-send-btn"
+            >
+              {isLoading ? (
+                <div className="athly-spinner-small"></div>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </button>
+          </div>
+        </form>
+        
+        <div className="athly-chat-footer">
+          <p>💬 Coach IA alimenté par la technologie Athly</p>
         </div>
       </div>
     </div>
