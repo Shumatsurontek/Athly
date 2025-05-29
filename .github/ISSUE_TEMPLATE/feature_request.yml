@@ -1,0 +1,111 @@
+name: ✨ Feature Request
+description: Proposer une nouvelle fonctionnalité
+title: "[FEATURE] "
+labels: ["enhancement", "needs-triage"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de proposer une nouvelle fonctionnalité ! 
+        Votre contribution aide à améliorer le projet.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 📋 Résumé de la fonctionnalité
+      description: Description courte et claire de la fonctionnalité proposée
+      placeholder: En tant qu'utilisateur, je veux... afin de...
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 🎯 Problème à résoudre
+      description: Quel problème cette fonctionnalité résout-elle ?
+      placeholder: Décrivez le problème ou le besoin que cette fonctionnalité adresserait...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 💡 Solution proposée
+      description: Comment imaginez-vous cette fonctionnalité ?
+      placeholder: Décrivez en détail comment cette fonctionnalité devrait fonctionner...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: 🎯 Composant concerné
+      description: Quelle partie de l'application serait affectée ?
+      options:
+        - Frontend (Interface utilisateur)
+        - Backend (API/Serveur)
+        - Base de données
+        - Authentification
+        - Configuration/Déploiement
+        - Documentation
+        - Autre
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 🚨 Priorité
+      description: Quelle est l'importance de cette fonctionnalité ?
+      options:
+        - Critique (Bloquant pour les utilisateurs)
+        - Élevée (Très utile)
+        - Moyenne (Amélioration appréciable)
+        - Faible (Nice to have)
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 Alternatives considérées
+      description: Avez-vous pensé à d'autres solutions ?
+      placeholder: Décrivez les alternatives que vous avez envisagées...
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: 🎨 Mockups/Wireframes
+      description: Si applicable, ajoutez des maquettes ou schémas
+      placeholder: Glissez-déposez vos fichiers ici ou collez des liens...
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: ✅ Critères d'acceptation
+      description: Comment saurez-vous que cette fonctionnalité est terminée ?
+      placeholder: |
+        - [ ] L'utilisateur peut...
+        - [ ] Le système affiche...
+        - [ ] Les tests passent...
+
+  - type: textarea
+    id: technical
+    attributes:
+      label: 🔧 Considérations techniques
+      description: Y a-t-il des aspects techniques particuliers à considérer ?
+      placeholder: APIs à utiliser, contraintes de performance, compatibilité...
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: ✅ Checklist
+      description: Vérifiez que vous avez bien...
+      options:
+        - label: Vérifié que cette fonctionnalité n'existe pas déjà
+          required: true
+        - label: Vérifié qu'une demande similaire n'a pas déjà été faite
+          required: true
+        - label: Fourni suffisamment de détails pour comprendre la demande
+          required: true 

@@ -1,0 +1,19 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app/backend
+    environment:
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY:-your_mistral_api_key_here}
+      - DEBUG=${DEBUG:-True}
+      - PYTHONPATH=/app/backend
+    networks:
+      - athly-network
+
+networks:
+  athly-network:
+    driver: bridge 

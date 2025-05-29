@@ -129,5 +129,3 @@ htmlcov/
 
 # Static files
 static/
-
-.devcontainer/
