@@ -21,11 +21,11 @@ cd ..
 
 # Arrêt des conteneurs existants si nécessaire
 echo "🛑 Arrêt des conteneurs existants..."
-docker-compose down
+docker compose down
 
 # Construction et démarrage des conteneurs
 echo "🚀 Construction et démarrage des conteneurs..."
-docker-compose up --build
+docker compose up --build
 
 echo "✅ Application démarrée ! Accessible à l'adresse http://localhost:3000"
-echo "📝 Pour voir les logs en temps réel: docker-compose logs -f" 
+echo "📝 Pour voir les logs en temps réel: docker compose logs -f" 
