@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -23,6 +21,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    ports:
+      - "3000:3000"  # Exposé directement pour le développement
     volumes:
       # Mount frontend source code for live reload
       - ./frontend:/app/frontend
@@ -37,17 +37,17 @@ services:
       - athly-network
     # Ne pas exposer le port directement - nginx servira l'application
 
-  nginx:
-    build:
-      context: .
-      dockerfile: nginx.Dockerfile
-    ports:
-      - "3000:80"  # Modifier 80 -> 3000 pour éviter les problèmes de permission
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - athly-network
+  # nginx:
+  #   build:
+  #     context: .
+  #     dockerfile: nginx.Dockerfile
+  #   ports:
+  #     - "3000:80"
+  #   depends_on:
+  #     - backend
+  #     - frontend
+  #   networks:
+  #     - athly-network
 
 networks:
   athly-network:
