@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -10,9 +8,11 @@ services:
     volumes:
       # Mount backend source code for live reload
       - ./backend:/app/backend
-    env_file:
-      # Pass environment variables from .env file
-      - ./.env 
+    environment:
+      # Environment variables with defaults
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY:-your_mistral_api_key_here}
+      - DEBUG=${DEBUG:-True}
+      - PYTHONPATH=/app/backend
     # Dépend du service frontend pour s'assurer qu'il est lancé (optionnel mais peut aider)
     # depends_on:
     #   - frontend
