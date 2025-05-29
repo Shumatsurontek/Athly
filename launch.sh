@@ -3,17 +3,11 @@
 # Script de lancement pour Athly
 set -e
 
-echo "🚀 Lancement d'Athly..."
+echo "🚀 Lancement d'Athly avec Docker..."
 
 # Vérifier que Docker est en cours d'exécution
 if ! docker info > /dev/null 2>&1; then
     echo "❌ Docker n'est pas en cours d'exécution. Veuillez démarrer Docker Desktop."
-    exit 1
-fi
-
-# Vérifier que Node.js est installé
-if ! command -v node &> /dev/null; then
-    echo "❌ Node.js n'est pas installé. Veuillez installer Node.js."
     exit 1
 fi
 
@@ -24,46 +18,33 @@ if [ ! -f .env ]; then
     echo "⚠️  N'oubliez pas de configurer vos variables d'environnement dans .env"
 fi
 
-# Construire et démarrer le backend avec Docker
-echo "🔨 Construction et démarrage du backend..."
-docker compose -f docker-compose.dev.yml up --build -d
+# Construire et démarrer tous les services avec Docker
+echo "🔨 Construction et démarrage des services..."
+docker compose up --build -d
 
-echo "⏳ Attente du démarrage du backend..."
-sleep 5
-
-# Installer les dépendances du frontend si nécessaire
-if [ ! -d "frontend/node_modules" ]; then
-    echo "📦 Installation des dépendances du frontend..."
-    cd frontend && npm install && cd ..
-fi
-
-# Démarrer le frontend en local
-echo "🌐 Démarrage du frontend..."
-cd frontend && npm run dev &
-FRONTEND_PID=$!
-cd ..
-
-echo "⏳ Attente du démarrage du frontend..."
-sleep 10
+echo "⏳ Attente du démarrage des services..."
+sleep 15
 
 # Vérifier que les services sont en cours d'exécution
-if docker compose -f docker-compose.dev.yml ps | grep -q "Up"; then
+if docker compose ps | grep -q "Up"; then
     echo "✅ Services démarrés avec succès!"
     echo ""
     echo "🌐 Application disponible sur:"
     echo "   Frontend: http://localhost:3000"
     echo "   Backend API: http://localhost:8000"
+    echo "   Documentation API: http://localhost:8000/docs"
     echo ""
     echo "📋 Commandes utiles:"
-    echo "   Voir les logs backend: docker compose -f docker-compose.dev.yml logs -f"
-    echo "   Arrêter backend: docker compose -f docker-compose.dev.yml down"
-    echo "   Arrêter frontend: kill $FRONTEND_PID"
-    echo "   Redémarrer: ./launch.sh"
+    echo "   Voir les logs: docker compose logs -f"
+    echo "   Voir logs d'un service: docker compose logs -f [backend|frontend]"
+    echo "   Arrêter: docker compose down"
+    echo "   Redémarrer: docker compose restart"
+    echo "   Reconstruire: docker compose up --build"
     echo ""
-    echo "🔄 Le frontend se recharge automatiquement lors des modifications"
-    echo "🔄 Le backend se recharge automatiquement lors des modifications"
+    echo "🔄 Les services se rechargent automatiquement lors des modifications"
+    echo "📊 Monitoring: docker compose ps"
 else
-    echo "❌ Erreur lors du démarrage du backend"
-    docker compose -f docker-compose.dev.yml logs
+    echo "❌ Erreur lors du démarrage des services"
+    docker compose logs
     exit 1
 fi 
